@@ -1,0 +1,19 @@
+user
+date
+chat
+text
+
+Приём и отправка:
+
+audio
+video 
+document
+location
+voice
+sticker
+
+delete()
+forward()
+send_murkup()
+send_inline()
+
