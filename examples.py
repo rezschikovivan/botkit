@@ -242,37 +242,64 @@
 #     #через фабрику получаем экземпляр имплементора
 #     @property
 #     def filter_imp(self):return self.__filter_imp
-#     @filter_imp.setter
-#     def filter_imp(self, new): self.__filter_imp = new
-#     @property
-#     def text(self):
-#         return super().text
-#     @property
-#     def in_text(self):pass
-#     @in_text.setter
-#     def in_text(self, text): return lambda x : text in x.text
-#     @property
-#     def cmnd(self):pass
-#     @cmnd.setter
-#     def cmnd(self, text): return lambda x : x.text == f"/{text}"
-class ClassProperty:
-    def __init__(self, prop):
-        self.func = prop
-    def __get__(self, inst, klass=None):
-        if klass is None:
-            klass = type(inst)
-        return self.func(klass)
-def classproperty(func):
-    return ClassProperty(func)
+# #     @filter_imp.setter
+# #     def filter_imp(self, new): self.__filter_imp = new
+# #     @property
+# #     def text(self):
+# #         return super().text
+# #     @property
+# #     def in_text(self):pass
+# #     @in_text.setter
+# #     def in_text(self, text): return lambda x : text in x.text
+# #     @property
+# #     def cmnd(self):pass
+# #     @cmnd.setter
+# #     def cmnd(self, text): return lambda x : x.text == f"/{text}"
+# class ClassProperty:
+#     def __init__(self, prop):
+#         self.func = prop
+#     def __get__(self, inst, klass=None):
+#         if klass is None:
+#             klass = type(inst)
+#         return self.func(klass)
+# def classproperty(func):
+#     return ClassProperty(func)
 
-import abc
-class A0(abc.ABC):
-    @classproperty
-    @abc.abstractmethod
-    def foo(cls):
-        return "hello"
-class A1(A0):
-    @classproperty
-    def foo(cls):
-        return super().foo
-print(A0.foo)
+# import abc
+# class A0(abc.ABC):
+#     @classproperty
+#     @abc.abstractmethod
+#     def foo(cls):
+#         return "hello"
+# class A1(A0):
+#     @classproperty
+#     def foo(cls):
+#         return super().foo
+# print(A0.foo)
+from typing import List, Any, Dict, Iterable
+class Button():
+    def __init__(self, row:int, column:int, text:str, action:str|Dict):
+        self.row = row
+        self.column = column
+        self.text = text
+        self.action = action
+
+class Keyboard():
+
+    def __init__(self, frame:List[List[str,str]]):
+        """Во frame принимается многомерный список, внутри которого каждый список определяет строку и кол-во эл-ов в ней.
+         Внутри 'структурирующих' списков первым указывается название кнопки и затем действие. По умолчанию действие это отправка текста, 
+         если будет указанна ссылка, то при нажатии будет осуществлённ переход. Также можно указать callback, он указываетя 2-м эл-ом
+          списка как значение словаря под любым ключом. """
+        self.buttons:List[Button] = []
+        self.check(frame)
+        print(self.buttons)
+
+    def check(self, iterable:Iterable, row=-1, column=-1):
+        for i in iterable:
+            row += 1
+            if isinstance(i[0], list):
+                self.buttons.extend(self.check(i, row, column+1))
+            else:
+                self.buttons.append(Button(row, column, i[0],i[1]))
+Keyboard([ [ [1,2],[1,2] ],  [ [1,2],[1,2] ] ])

@@ -27,7 +27,7 @@ class AiogramMsger(ABCMessager):
 
 # Класс-регистратор в aiogram
 class AiogramComponent(BaseComponent):
-    bots:Dict[str,aiogram.Bot] = {}
+    bots: Dict[str,aiogram.Bot] = {}
     dispatchers: Dict[str,aiogram.Dispatcher] = {}
     @classmethod
     def get_filter(cls):
@@ -49,7 +49,3 @@ class AiogramComponent(BaseComponent):
         for token, disp in cls.dispatchers.items():
             tasks.append(disp.start_polling(cls.bots[token]))
         return tasks
-    
-
-
-    

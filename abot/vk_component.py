@@ -7,6 +7,7 @@ from vkbottle.dispatch.rules.base import AttachmentTypeRule
 from vkbottle.dispatch.handlers import FromFuncHandler
 from vkbottle.dispatch.rules import ABCRule
 from vkbottle.bot import Message
+from vkbottle import Keyboard
 
 
 class VKFilter(ABCFilter):
@@ -27,17 +28,19 @@ class VKFilter(ABCFilter):
     
 class VKMsger(ABCMessager):
     """Реализует взаимодействие спользователем вк (отправка сообщений и прочее)"""
+    def __init__(self, bots:Dict[str,vkbottle.Bot]):
+        self.bots:Dict[str,vkbottle.Bot] = bots
     @classmethod
     def msg_type(cls):
         return Message
     async def answer(self, msg:Message, text):
-        await msg.answer(text)
-    async def delete(self, msg):
-        return await super().delete(msg)
-    async def reply(self, msg, text):
-        return await super().reply(msg, text)
-    async def send_inline_kboard(self, msg, text, callback=None, url=None):
-        return await super().send_inline_kboard(msg, text, callback, url)
+        return await msg.answer(text)
+    async def delete(self, msg:Message):
+        raise RuntimeError("VKBottle пока не умеет удалять сообщения (я не нашел)")
+    async def reply(self, msg:Message, text):
+        await msg.reply(text)
+    async def send_inline_kboard(self, msg:Message, text, callback=None, url=None):
+        await msg.answer()
     async def send_reply_kboard(self, msg, text, url=None):
         return await super().send_reply_kboard(msg, text, url)
 
