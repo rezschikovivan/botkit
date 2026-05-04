@@ -1,4 +1,3 @@
-import abc
 from typing import List, Dict
 from scheldue_data_classes import Lesson, Day, Group
 import aiohttp

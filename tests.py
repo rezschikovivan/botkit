@@ -1,6 +1,8 @@
 from abot import ClsHandler, set_handlers_registrator, start_bots, VKBottleComponent, Handler, Filter, Actions, AiogramComponent
 from scheldue import Observer
 
+# ПРИМЕР ИСПОЛЬЗОВАНИЯ, ТЕСТОВ ПОКА НЕТ...
+
 # class F(ClsHandler, ABC):
 #     @classmethod
 #     def before(cls, mcs, name, bases, attrs):

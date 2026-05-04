@@ -80,6 +80,8 @@ class MsgerFactory():
     @classmethod
     def make_msger(cls, msg:Any)->ABCMessager:
         """Возвращает мессаджер соответствующий типу сообщения"""
+        # в будущем надо переделать под хэш-таблицу, чтобы работало быстрее
+        # тк вызывается при каждом сообщении 
         for m in cls.msges:
             if isinstance(msg, m.msg_type()):
                 return m
