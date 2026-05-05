@@ -1,0 +1,2 @@
+tgram_token = "8397880073:AAFTQ8EN4_ZbCvnBfO_zQ3v_365IpJFeJMI"
+vk_token = "vk1.a.pbtjqD3lTctuA-OC6_Gi78lySLMZFVzc0bpUta78beFz8ehlF7rAzQL2F7F8Y6CIOT_YaE4O680zd05dZiHiuigrKnpPZYZ7-3JxLC1ZufcLGPo-WU8WLcw2wzbJksRzGwivmTR9OD7f56TkXJ3bdBeUKgi8zdoEbnVhMvlV9F-p4g8s9ghB2Nu3g8xbNxOl_O1rR0_strG3A1k4AXkfNw"

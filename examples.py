@@ -276,30 +276,40 @@
 #     def foo(cls):
 #         return super().foo
 # print(A0.foo)
-from typing import List, Any, Dict, Iterable
-class Button():
-    def __init__(self, row:int, column:int, text:str, action:str|Dict):
-        self.row = row
-        self.column = column
-        self.text = text
-        self.action = action
+# from typing import List, Any, Dict, Iterable
+# class Button():
+#     def __init__(self, row:int, column:int, text:str, action:str|Dict):
+#         self.row = row
+#         self.column = column
+#         self.text = text
+#         self.action = action
 
-class Keyboard():
+# class Keyboard():
 
-    def __init__(self, frame:List[List[str,str]]):
-        """Во frame принимается многомерный список, внутри которого каждый список определяет строку и кол-во эл-ов в ней.
-         Внутри 'структурирующих' списков первым указывается название кнопки и затем действие. По умолчанию действие это отправка текста, 
-         если будет указанна ссылка, то при нажатии будет осуществлённ переход. Также можно указать callback, он указываетя 2-м эл-ом
-          списка как значение словаря под любым ключом. """
-        self.buttons:List[Button] = []
-        self.check(frame)
-        print(self.buttons)
+#     def __init__(self, frame:List[List[str,str]]):
+#         """Во frame принимается многомерный список, внутри которого каждый список определяет строку и кол-во эл-ов в ней.
+#          Внутри 'структурирующих' списков первым указывается название кнопки и затем действие. По умолчанию действие это отправка текста, 
+#          если будет указанна ссылка, то при нажатии будет осуществлённ переход. Также можно указать callback, он указываетя 2-м эл-ом
+#           списка как значение словаря под любым ключом. """
+#         self.buttons:List[Button] = []
+#         self.check(frame)
+#         print(self.buttons)
 
-    def check(self, iterable:Iterable, row=-1, column=-1):
-        for i in iterable:
-            row += 1
-            if isinstance(i[0], list):
-                self.buttons.extend(self.check(i, row, column+1))
-            else:
-                self.buttons.append(Button(row, column, i[0],i[1]))
-Keyboard([ [ [1,2],[1,2] ],  [ [1,2],[1,2] ] ])
+#     def check(self, iterable:Iterable, row=-1, column=-1):
+#         for i in iterable:
+#             row += 1
+#             if isinstance(i[0], list):
+#                 self.buttons.extend(self.check(i, row, column+1))
+#             else:
+#                 self.buttons.append(Button(row, column, i[0],i[1]))
+# Keyboard([ [ [1,2],[1,2] ],  [ [1,2],[1,2] ] ])
+import abc
+class A(abc.ABC):
+    @abc.abstractmethod
+    def __init__(self, msg):
+        self.msg = msg
+
+class A1(A):
+    def __init__(self, msg):
+        super().__init__(msg)
+print(A1("a").msg)

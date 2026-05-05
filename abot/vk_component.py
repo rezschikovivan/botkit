@@ -1,14 +1,14 @@
 from abot.core import BaseComponent, ABCFilter
-from abot.messaging import ABCMessager
-from typing import Dict
+from abot.messaging import ABCMessager,Button,Sender
+import abot.messaging
+from typing import Dict, Any
 import vkbottle
 import asyncio
 from vkbottle.dispatch.rules.base import AttachmentTypeRule
 from vkbottle.dispatch.handlers import FromFuncHandler
 from vkbottle.dispatch.rules import ABCRule
 from vkbottle.bot import Message
-from vkbottle import Keyboard
-
+from vkbottle import Keyboard, OpenLink, Callback, Text
 
 class VKFilter(ABCFilter):
     """Реализует работу с фильтрами vkbottle"""
@@ -28,8 +28,9 @@ class VKFilter(ABCFilter):
     
 class VKMsger(ABCMessager):
     """Реализует взаимодействие спользователем вк (отправка сообщений и прочее)"""
-    def __init__(self, bots:Dict[str,vkbottle.Bot]):
-        self.bots:Dict[str,vkbottle.Bot] = bots
+    msg:Message# нужно чтобы интерпритатор видел тип поля
+    def __init__(self, msg):
+        super().__init__(msg)
     @classmethod
     def msg_type(cls):
         return Message
@@ -39,11 +40,70 @@ class VKMsger(ABCMessager):
         raise RuntimeError("VKBottle пока не умеет удалять сообщения (я не нашел)")
     async def reply(self, msg:Message, text):
         await msg.reply(text)
-    async def send_inline_kboard(self, msg:Message, text, callback=None, url=None):
-        await msg.answer()
-    async def send_reply_kboard(self, msg, text, url=None):
-        return await super().send_reply_kboard(msg, text, url)
+    async def send_reply_kboard(self, msg, keyboard:Keyboard, text:str|None = None):
+        vk_keyboard:Keyboard = Keyboard(True, False)
+        self.create_kboard(vk_keyboard, keyboard)
+        await msg.answer(text, keyboard=vk_keyboard)
+    async def send_inline_kboard(self, msg:Message, keyboard:abot.messaging.Keyboard, text:str|None = None):
+        vk_keyboard:Keyboard = Keyboard(False, True)
+        self.create_kboard(vk_keyboard, keyboard)
+        await msg.answer(text, keyboard=vk_keyboard)
+    def create_kboard(self, vk_keyboard:Keyboard, keyboard:abot.messaging.Keyboard):
+        row = 0
+        for b in keyboard.buttons:
+            if b.row == row:
+                self.add_button(vk_keyboard, b)
+            else:
+                row = b.row
+                vk_keyboard.row()
+                self.add_button(vk_keyboard, b)
+    def add_button(self, vk_keyboard:Keyboard, button:Button):
+        if button.is_url:
+            vk_keyboard.add(OpenLink(button.action, button.text))
+        elif button.is_callback:
+            vk_keyboard.add(Callback(button.text, {"payload":list(button.action.values())[0]}))
+        else: 
+            vk_keyboard.add(Text(button.text, {"payload":str(button.action)}))
+    @property
+    def data(self):
+        return self.msg.date
+    @property
+    def text(self):
+        return self.msg.text
+    def get_attachment(self, attach_type:str)->Any|None:
+        if not self.msg.attachments:
+            return None
+        attachment = None
+        for i in self.msg.attachments:
+            if i.type.value == attach_type:
+                attachment = i.doc
+                break
+        else: return None
+        return attachment
+    @property
+    def document(self):
+        return self.get_attachment("doc")
+    @property
+    def audio(self):
+        return self.get_attachment("audio")
+    @property
+    def video(self):
+        return self.get_attachment("video")
+    @property
+    def location(self):
+        return self.get_attachment("geo")
+    @property
+    def voice(self):
+        return self.get_attachment("audio_message")
+    @property
+    def sticker(self):
+        return self.get_attachment("sticker")
+    @property
+    def sender(self):
+        user = asyncio.get_running_loop().create_task(self.msg.get_user())
 
+        return Sender(self.msg.from_id, user[0].first_name,user[0].last_name)
+    
 # Класс-регистратор в vkbottle
 class VKBottleComponent(BaseComponent):
     bots:Dict[str,vkbottle.Bot] = {}
@@ -52,7 +112,7 @@ class VKBottleComponent(BaseComponent):
         return VKFilter()
     @classmethod
     def get_messager(cls):
-        return VKMsger()
+        return VKMsger
     @classmethod
     def add_bot(cls, token:str):
         if not token in cls.bots.keys():

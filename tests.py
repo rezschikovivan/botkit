@@ -1,7 +1,12 @@
-from abot import ClsHandler, set_handlers_registrator, start_bots, VKBottleComponent, Handler, Filter, Actions, AiogramComponent
+from abot import ClsHandler, set_handlers_registrator, start_bots, VKBottleComponent, Handler, Filter, Actions, AiogramComponent, Keyboard
 from scheldue import Observer
 
-# ПРИМЕР ИСПОЛЬЗОВАНИЯ, ТЕСТОВ ПОКА НЕТ...
+import tokens
+
+vk_token = tokens.vk_token
+tgram_token = tokens.tgram_token
+
+# ПРИМЕР ИСПОЛЬЗОВАНИЯ. ТЕСТОВ ПОКА НЕТ...
 
 # class F(ClsHandler, ABC):
 #     @classmethod
@@ -20,21 +25,21 @@ class Echo():
         await Actions.answer(message, "Рад видеть!")
 
 class VKEcho(Echo, VKBottleComponent):    
-    __TOKEN__ = "vk1.a.pbtjqD3lTctuA-OC6_Gi78lySLMZFVzc0bpUta78beFz8ehlF7rAzQL2F7F8Y6CIOT_YaE4O680zd05dZiHiuigrKnpPZYZ7-3JxLC1ZufcLGPo-WU8WLcw2wzbJksRzGwivmTR9OD7f56TkXJ3bdBeUKgi8zdoEbnVhMvlV9F-p4g8s9ghB2Nu3g8xbNxOl_O1rR0_strG3A1k4AXkfNw"
+    __TOKEN__ = vk_token
 
     @Handler(Filter().in_text("hi"))
     async def cab2(message):
-        await Actions.answer(message, "!!!!")
+        await Actions.send_reply_kboard(message, text="инлайн клавиатура", keyboard=Keyboard([ [["name1", "https://zvuk.com/track/176947994"], ["name2",{"clb":"data"}]] ]))
     @Handler(Filter().text("hello"))
     async def cab3(message):
         await Actions.answer(message, "Кфбинет №9")
 
 class TGEcho(Echo, AiogramComponent):
-    __TOKEN__ = "8397880073:AAFTQ8EN4_ZbCvnBfO_zQ3v_365IpJFeJMI"
+    __TOKEN__ = tgram_token
 
     @Handler(Filter().in_text("hi"))
     async def cab2(message):
-        await Actions.answer(message, "&&&&&")
+        await Actions.send_inline_kboard(message, text="инлайн клавиатура", keyboard=Keyboard([ [["name", "adata"], ["name","data"]] ]))
     @Handler(Filter().text("hello"))
     async def cab3(message):
         await Actions.answer(message, "Кфбинет №22")
