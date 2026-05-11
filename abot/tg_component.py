@@ -1,8 +1,8 @@
-from abot.core import BaseComponent, ABCFilter, ABCMessager
-from aiogram.types import Message
+from abot.core import BaseComponent, ABCFilter, ABCMsger
 from typing import Dict
+from aiogram.types import Message
 from aiogram.filters import BaseFilter 
-import aiogram
+from aiogram import Bot, Dispatcher
 
 class CustomFilter(BaseFilter):
     def __init__(self, *func: callable):
@@ -18,7 +18,7 @@ class AiogramFilter(ABCFilter):
     def func(self, f):
         return CustomFilter(f)
     
-class AiogramMsger(ABCMessager):
+class AiogramMsger(ABCMsger):
     @classmethod
     def msg_type(cls):
         return Message
@@ -27,8 +27,8 @@ class AiogramMsger(ABCMessager):
 
 # Класс-регистратор в aiogram
 class AiogramComponent(BaseComponent):
-    bots: Dict[str,aiogram.Bot] = {}
-    dispatchers: Dict[str,aiogram.Dispatcher] = {}
+    bots: Dict[str,Bot] = {}
+    dispatchers: Dict[str,Dispatcher] = {}
     @classmethod
     def get_filter(cls):
         pass
@@ -38,10 +38,10 @@ class AiogramComponent(BaseComponent):
     @classmethod
     def add_bot(cls, token:str):
         if not token in cls.bots.keys():
-            cls.bots[token] = aiogram.Bot(token=token)
-            cls.dispatchers[token] = aiogram.Dispatcher()
+            cls.bots[token] = Bot(token=token)
+            cls.dispatchers[token] = Dispatcher()
     @classmethod
-    def register_method(cls, token, method, *filters):
+    def register_handler(cls, token, method, *filters):
         cls.dispatchers[token].message.register(method, *filters)
     @classmethod
     def cretae_polling_tasks(cls):

@@ -7,7 +7,6 @@ my_id = 5328981727
 
 dir_path = os.path.dirname(os.path.abspath(__file__))
 
-
 def download(name:str,value_to_read):#загрузить
         with open(dir_path + rf"\{name}", "r") as f:
             # Записываем словарь

@@ -1,9 +1,9 @@
 ﻿from aiogram import Bot, Dispatcher, Router, types, F, BaseMiddleware
 from aiogram.filters import  Command
 from aiogram.types import InlineKeyboardMarkup as Markup, InlineKeyboardButton as Button, Message, TelegramObject
-from DB import Roles, set_role
+from scheldue_bot.DB import Roles, set_role
 
-from DB import CheckStatus
+from scheldue_bot.DB import CheckStatus
 
 
 teacher_router = Router()

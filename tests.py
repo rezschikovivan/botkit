@@ -1,5 +1,12 @@
-from abot import ClsHandler, set_handlers_registrator, start_bots, VKBottleComponent, Handler, Filter, Actions, AiogramComponent, Keyboard
-from scheldue import Observer
+import time
+t1 = time.time()
+
+from abot import Filter, Handler, Actions
+from abot.vk_component import VKBottleComponent
+
+
+t2 = time.time()
+print(t2-t1)
 
 import tokens
 
@@ -24,25 +31,36 @@ class Echo():
     async def cab1(message):
         await Actions.answer(message, "Рад видеть!")
 
+    @Handler(Filter().in_text("name2"))
+    async def cab8(message):
+        await Actions.answer(message, "Вы воспользовались кнопкой!")
+
 class VKEcho(Echo, VKBottleComponent):    
-    __TOKEN__ = vk_token
+    TOKEN = vk_token
 
-    @Handler(Filter().in_text("hi"))
+    @Handler()
     async def cab2(message):
-        await Actions.send_reply_kboard(message, text="инлайн клавиатура", keyboard=Keyboard([ [["name1", "https://zvuk.com/track/176947994"], ["name2",{"clb":"data"}]] ]))
-    @Handler(Filter().text("hello"))
-    async def cab3(message):
-        await Actions.answer(message, "Кфбинет №9")
+        #Actions.get_msg(message).sender
+        user = await Actions.get_msg(message).sender#, await Actions.get_msg(message).sender.last_name)
+        print(user.first_name)
+        # print("ФОТО:  ", Actions.get_msg(message).photo)
+        # print("ДОКУМЕНТ:  ", Actions.get_msg(message).document)
+        # print("АУДИО:  ", Actions.get_msg(message).audio)
+        # print("ГОЛОСОВОЕ:  ",Actions.get_msg(message).voice)
+        # print("ВИДЕО:  ", Actions.get_msg(message).video)
+        # print("ТЕКСТ:  ", Actions.get_msg(message).text)
+        # print("data:  ", Actions.get_msg(message).date)
 
-class TGEcho(Echo, AiogramComponent):
-    __TOKEN__ = tgram_token
 
-    @Handler(Filter().in_text("hi"))
-    async def cab2(message):
-        await Actions.send_inline_kboard(message, text="инлайн клавиатура", keyboard=Keyboard([ [["name", "adata"], ["name","data"]] ]))
-    @Handler(Filter().text("hello"))
-    async def cab3(message):
-        await Actions.answer(message, "Кфбинет №22")
+# class TGEcho(Echo, AiogramComponent):
+#     TOKEN = tgram_token
+
+#     @Handler(Filter().in_text("hi"))
+#     async def cab2(message):
+#         await Actions.send_inline_kboard(message, keyboard=Keyboard([ [["name", "adata"], ["name","data"]] ]),text="инлайн клавиатура")
+#     @Handler(Filter().text("hello"))
+#     async def cab3(message):
+#         await Actions.answer(message, "Кфбинет №22")
 
 import asyncio
 print("works")

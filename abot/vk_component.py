@@ -1,14 +1,14 @@
 from abot.core import BaseComponent, ABCFilter
-from abot.messaging import ABCMessager,Button,Sender
+from abot.messaging import ABCMsger,Button,Sender
 import abot.messaging
 from typing import Dict, Any
-import vkbottle
 import asyncio
-from vkbottle.dispatch.rules.base import AttachmentTypeRule
+from vkbottle.dispatch.rules.base import AttachmentTypeRule, PayloadRule
 from vkbottle.dispatch.handlers import FromFuncHandler
 from vkbottle.dispatch.rules import ABCRule
-from vkbottle.bot import Message
+from vkbottle.bot import Message, Bot
 from vkbottle import Keyboard, OpenLink, Callback, Text
+from vkbottle_types.objects import UsersUserFull
 
 class VKFilter(ABCFilter):
     """Реализует работу с фильтрами vkbottle"""
@@ -23,11 +23,25 @@ class VKFilter(ABCFilter):
                     return False
                 else: return True
         return CustomRule(f)
+    def callback(self, data):
+        return super().callback(data)
     def photo(self):
         return AttachmentTypeRule("photo")
+    def video(self):
+        return AttachmentTypeRule("video")
+    def audio(self):
+        return AttachmentTypeRule("audio")
+    def document(self):
+        return AttachmentTypeRule("doc")
+    def location(self):
+        return AttachmentTypeRule("geo")
+    def voice(self):
+        return AttachmentTypeRule("voice")
+    def sticker(self):
+        return AttachmentTypeRule("sticker")
     
-class VKMsger(ABCMessager):
-    """Реализует взаимодействие спользователем вк (отправка сообщений и прочее)"""
+class VKMsger(ABCMsger):
+    """Реализует взаимодействие спользователем вк (отправка сообщений и тп)"""
     msg:Message# нужно чтобы интерпритатор видел тип поля
     def __init__(self, msg):
         super().__init__(msg)
@@ -37,18 +51,18 @@ class VKMsger(ABCMessager):
     async def answer(self, msg:Message, text):
         return await msg.answer(text)
     async def delete(self, msg:Message):
-        raise RuntimeError("VKBottle пока не умеет удалять сообщения (я не нашел)")
+        raise RuntimeError("VKBottleComponent пока не умеет удалять сообщения (я не нашел)")
     async def reply(self, msg:Message, text):
         await msg.reply(text)
-    async def send_reply_kboard(self, msg, keyboard:Keyboard, text:str|None = None):
+    async def send_reply_kboard(self, msg:Message, keyboard:Keyboard, text:str|None = None):
         vk_keyboard:Keyboard = Keyboard(True, False)
-        self.create_kboard(vk_keyboard, keyboard)
+        self.create_vk_kboard(vk_keyboard, keyboard)
         await msg.answer(text, keyboard=vk_keyboard)
     async def send_inline_kboard(self, msg:Message, keyboard:abot.messaging.Keyboard, text:str|None = None):
         vk_keyboard:Keyboard = Keyboard(False, True)
-        self.create_kboard(vk_keyboard, keyboard)
+        self.create_vk_kboard(vk_keyboard, keyboard)
         await msg.answer(text, keyboard=vk_keyboard)
-    def create_kboard(self, vk_keyboard:Keyboard, keyboard:abot.messaging.Keyboard):
+    def create_vk_kboard(self, vk_keyboard:Keyboard, keyboard:abot.messaging.Keyboard):
         row = 0
         for b in keyboard.buttons:
             if b.row == row:
@@ -63,62 +77,55 @@ class VKMsger(ABCMessager):
         elif button.is_callback:
             vk_keyboard.add(Callback(button.text, {"payload":list(button.action.values())[0]}))
         else: 
-            vk_keyboard.add(Text(button.text, {"payload":str(button.action)}))
+            vk_keyboard.add(Text(button.text, payload={"payload":str(button.action)}))
     @property
-    def data(self):
+    def date(self):
         return self.msg.date
     @property
     def text(self):
         return self.msg.text
-    def get_attachment(self, attach_type:str)->Any|None:
-        if not self.msg.attachments:
-            return None
-        attachment = None
-        for i in self.msg.attachments:
-            if i.type.value == attach_type:
-                attachment = i.doc
-                break
-        else: return None
-        return attachment
     @property
     def document(self):
-        return self.get_attachment("doc")
+        return self.msg.get_doc_attachments()
     @property
     def audio(self):
-        return self.get_attachment("audio")
+        return self.msg.get_audio_attachments()
     @property
     def video(self):
-        return self.get_attachment("video")
+        return self.msg.get_video_attachments()
     @property
     def location(self):
-        return self.get_attachment("geo")
+        raise RuntimeError("VKBottleComponent пока не умеет (я не нашел)")
     @property
     def voice(self):
-        return self.get_attachment("audio_message")
+        return self.msg.get_audio_message_attachments()
     @property
-    def sticker(self):
-        return self.get_attachment("sticker")
+    def photo(self):
+        return self.msg.get_photo_attachments()
     @property
-    def sender(self):
-        user = asyncio.get_running_loop().create_task(self.msg.get_user())
+    async def sender(self):
+        user: UsersUserFull = await self.msg.get_user()
+        return Sender(user.id, user.first_name, user.last_name, user.nickname)
+    @property
+    async def get_seder(self):
+        user = await self.msg.get_user()
+        return Sender(user.id, user.first_name, user.last_name, user.nickname)
 
-        return Sender(self.msg.from_id, user[0].first_name,user[0].last_name)
-    
-# Класс-регистратор в vkbottle
 class VKBottleComponent(BaseComponent):
-    bots:Dict[str,vkbottle.Bot] = {}
+    """Базовый компонент указывающий что класс-хэндлер относится к компоненту VKBottleComponent"""
+    bots:Dict[str, Bot] = {}
     @classmethod
     def get_filter(cls):
-        return VKFilter()
+        return VKFilter
     @classmethod
     def get_messager(cls):
         return VKMsger
     @classmethod
     def add_bot(cls, token:str):
         if not token in cls.bots.keys():
-            cls.bots[token] = vkbottle.Bot(token=token)
+            cls.bots[token] = Bot(token=token)
     @classmethod
-    def register_method(cls, token, method, *filters):
+    def register_handler(cls, token, method, *filters):
         if filters is None:
             return cls.bots[token].labeler.message_view.handlers.append(FromFuncHandler(method))
         cls.bots[token].labeler.message_view.handlers.append(FromFuncHandler(method, *filters))
@@ -129,7 +136,7 @@ class VKBottleComponent(BaseComponent):
             tasks.append(cls.__castom_polling(bot))
         return tasks
     
-    async def __castom_polling(bot:vkbottle.Bot, sleep_time:float=0.01):
+    async def __castom_polling(bot:Bot, sleep_time:float=0.01):
         while True:
             async for event in bot.polling.listen():
                 for update in event.get("updates"):

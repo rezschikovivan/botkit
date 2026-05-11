@@ -303,13 +303,78 @@
 #             else:
 #                 self.buttons.append(Button(row, column, i[0],i[1]))
 # Keyboard([ [ [1,2],[1,2] ],  [ [1,2],[1,2] ] ])
-import abc
-class A(abc.ABC):
-    @abc.abstractmethod
-    def __init__(self, msg):
-        self.msg = msg
+#mport abot.utils
+from vkbottle import Bot, GroupEventType, GroupTypes, Callback
+from vkbottle.bot import Message
+from vkbottle import Keyboard, Callback
+from vkbottle.modules import json
+import tokens
+from vkbottle.dispatch.rules.base import PayloadRule
 
-class A1(A):
-    def __init__(self, msg):
-        super().__init__(msg)
-print(A1("a").msg)
+TOKEN = tokens.vk_token
+# bot = Bot(token=TOKEN)
+
+# @bot.on.message(text="меню")
+# async def show_menu(message: Message):
+#     keyboard = (
+#         Keyboard()
+#         .add(Callback("Привет", {"action": "hello"}))
+#         .add(Callback("Пока", {"action": "bye"}))
+#     )
+#     await message.answer("Нажмите кнопку:", keyboard=keyboard)
+
+
+# @bot.on.message(PayloadRule({"action": "hello"}))
+# async def show_menu_handler(event):
+#     print("22")
+#     await bot.api.messages.send_message_event_answer(
+#             event_id=event.event_id,
+#             user_id=event.user_id,
+#             peer_id=event.peer_id,
+#             answer_data={"type": "show_snackbar", "text": "Привет! Рад вас видеть!"}
+#         )
+
+# @bot.on.message(PayloadRule({"action": "bye"}))
+# async def buy_item_handler(message):
+#     print(3333)
+#     # Логика покупки товара
+#     await message.answer("ehff")
+
+# if __name__ == "__main__":
+#     print("works")
+#     bot.run_forever()
+
+
+
+# bot = Bot(token=TOKEN)
+# lab = bot.labeler
+
+# @bot.on.message(text="меню")
+# async def show_menu(message: Message):
+#     keyboard = (
+#         Keyboard()
+#         .add(Callback("Старт", {"action": "start"}))
+#         .add(Callback("Помощь", {"action": "help"}))
+#         .add(Callback("Настройки", {"action": "settings", "user_id": message.from_id}))
+#     )
+#     await message.answer("Главное меню:", keyboard=keyboard)
+
+# # Обработчик для кнопки "Старт"
+# @bot.on.raw_event(GroupEventType.MESSAGE_EVENT, GroupTypes.MessageEvent, PayloadRule({"action": "start"}))
+# async def start_button_handler(message: Message):
+#     print(7897941)
+#     await message.answer("Вы нажали кнопку Старт! Начинаем работу...")
+
+
+# if __name__ == "__main__":
+#     print(1)
+#     bot.run_forever()
+
+class A:
+    slot = 5
+    def foo(self):
+        print(self.slot)
+class B(A):
+    def foo(self):
+        print(self.slot)
+B().foo()
