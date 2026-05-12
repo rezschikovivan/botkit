@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Any, Dict, Iterable,Callable
-from abot.mediator import Mediator, purefunc
+from typing import List, Any, Dict, Iterable, Callable
 
 class MsgerMetods(ABC):
     """Базовый класс определяющий общьий интерфейс мессаджеров"""
@@ -14,21 +13,6 @@ class MsgerMetods(ABC):
     async def send_reply_kboard(self,keyboard:"Keyboard", text:str|None = None):""" """
     @abstractmethod
     async def send_inline_kboard(self,keyboard:"Keyboard", text:str|None = None):""" """
-
-# class Actions(MsgerMetods, Mediator):
-#     """Класс-посредник, реализующий отправку сообщений и их чтение"""
-#     def wrapper(self, func:Callable):
-#         @staticmethod
-#         #@wraps(func) необязательно использовать (даже не рекомендованно из-за возможного сохранения абстрактной природы метода), сигнатура подтягивается из родителя
-#         async def wrap(msg, *args):
-#             msger: ABCMsger = MsgerFactory.make_msger(msg)
-#             await msger.__getattribute__(func.__name__)(msg, *args)
-#         return wrap
-#     @purefunc
-#     @staticmethod
-#     def get_msg(msg):
-#         """Возвращает экземпляр ABCMSger для этого сообщения"""
-#         return MsgerFactory.make_msger(msg)
 
 class ABCMsger(MsgerMetods):
     """Методы наследников этого класса должны переопределять методы для выполнения действия в соответствующей библиотеке"""

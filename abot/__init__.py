@@ -1,8 +1,6 @@
 """
-
+код ленивой инициализации модулей повзаимствован с https://github.com/pallets/werkzeug/tree/71eab19be2c83fb476de51275e2f9bdf69d5cc10
 """
-
-# код инициа повзаимствован с https://github.com/pallets/werkzeug/tree/71eab19be2c83fb476de51275e2f9bdf69d5cc10
 import sys
 from types import ModuleType
 
@@ -11,11 +9,11 @@ __version__ = "0.0.0"
 # import mapping to objects in other modules
 all_by_module = {
     "abot.core":["start_bots", "BaseComponent", "ClsHandler", "ClsComponenter", "CoreMeta", "set_cmpnts_registrator", "set_handlers_registrator"],
-    "abot.handle": ["Filter", "ABCFilter", "Handler", ],
-    "abot.messaging": ["Actions", "ABCMsger", "Sender", "Keyboard", "Button", "MsgerFactory"],
-    "abot.tg_component": ["AiogramComponent", "AiogramFilter", "AiogramMsger"],
-    "abot.vk_component": ["VKBottleComponent", "VKFilter", "VKMsger"]
-
+    "abot.handle": ["Handler"],
+    "abot.message": ["ABCMsger", "Sender", "Keyboard", "Button", "MsgerFactory"],
+    "abot.filter":["Filter", "ABCFilter"],
+    "abot.aiogram_component": ["AiogramComponent", "AiogramFilter", "AiogramMsger"],
+    "abot.vkbottle_component": ["VKBottleComponent", "VKFilter", "VKMsger"]
 }
 
 # modules that should be imported when accessed as attributes of werkzeug
@@ -57,9 +55,10 @@ class module(ModuleType):
         )
         return result
 
+from abot.message import ABCMsger, Sender, Keyboard, Button
+from abot.handle import Handler
+from abot.filter import Filter, ABCFilter
 from abot.core import start_bots, BaseComponent, ClsHandler, ClsComponenter, CoreMeta, set_cmpnts_registrator, set_handlers_registrator
-from abot.handle import Filter, Handler, ABCFilter
-from abot.messaging import ABCMsger, Sender, Keyboard, Button
 
 # keep a reference to this module so that it's not garbage collected
 old_module = sys.modules["abot"]
@@ -75,6 +74,6 @@ new_module.__dict__.update(
         "__version__": __version__,
         "__all__": tuple(object_origins) + tuple(attribute_modules) 
         #импортировать сразу
-        + tuple([ABCMsger, Sender, Keyboard, Button, ABCFilter, Filter, Handler,start_bots, BaseComponent, ClsHandler, ClsComponenter, CoreMeta, set_cmpnts_registrator, set_handlers_registrator])
+        + tuple([BaseComponent, ClsHandler, ClsComponenter, CoreMeta, set_cmpnts_registrator, set_handlers_registrator,start_bots, Filter, Handler, ABCFilter, ABCMsger, Sender, Keyboard, Button])
     }
 )

@@ -1,8 +1,8 @@
 import time
 t1 = time.time()
 
-from abot import Filter, Handler
-from abot.vk_component import VKBottleComponent
+from abot import Filter, Handler, ClsHandler, Keyboard, ABCMsger
+from abot.vkbottle_component import VKBottleComponent
 
 t2 = time.time()
 print(t2-t1)
@@ -23,14 +23,14 @@ tgram_token = tokens.tgram_token
 #     def after(cls, new_cls:Observer, mcs, name, bases, attrs):
 #         new_cls.register_as_observer()
 
-#set_handlers_registrator(F)
+# set_handlers_registrator(F)
 
 class Echo():
-    @Handler(Filter().in_text("прив"))
-    async def cab1(message):
+    @Handler(Filter().in_text("Привет"))
+    async def cab1(message:ABCMsger):
         await message.answer("Hello")
         print(type(message))
-        print(message.msg.text)
+        print(message.text)
 
     @Handler(Filter().in_text("name2"))
     async def cab8(message):

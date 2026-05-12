@@ -1,6 +1,7 @@
-from abot.handle import ABCFilter, Handler
+from abot.handle import Handler
+from abot.filter import ABCFilter
 from typing import List,Dict, Coroutine,Any,  Set, Tuple
-from abot.messaging import ABCMsger, MsgerFactory
+from abot.message import ABCMsger, MsgerFactory
 from abc import ABCMeta, abstractmethod
 import asyncio
     
@@ -176,4 +177,4 @@ class BaseComponent(metaclass=CoreMeta):
     @classmethod
     @abstractmethod
     def cretae_polling_tasks(cls)->Coroutine:
-        """ Возвращает корутину для опроса сервера (поллинга)."""
+        """ Возвращает корутину для опроса сервера (поллинга) всех ботов."""

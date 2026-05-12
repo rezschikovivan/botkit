@@ -1,6 +1,6 @@
 from abot.core import BaseComponent, ABCFilter
-from abot.messaging import ABCMsger,Button,Sender
-from abot.messaging import Keyboard
+from abot.message import ABCMsger,Button,Sender
+from abot.message import Keyboard
 from typing import Dict, Any
 import asyncio
 from vkbottle.dispatch.rules.base import AttachmentTypeRule, PayloadRule

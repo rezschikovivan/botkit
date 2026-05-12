@@ -1,7 +1,7 @@
 import time
 t1 = time.time()
-from abot import Filter, Handler, Actions, start_bots, ClsHandler, set_handlers_registrator
-from abot.vk_component import VKBottleComponent
+from abot import Filter, Handler, start_bots, ClsHandler, set_handlers_registrator, ABCMsger
+from abot.vkbottle_component import VKBottleComponent
 t2 = time.time()
 print(t2-t1)
 
@@ -9,7 +9,6 @@ from scheldue import Observer, ScheldueGetter
 import tokens
 
 vk_token = tokens.vk_token
-
 
 class ScheldueClsHandler(ClsHandler):
     def before(cls, mcs, name, bases, attrs):
@@ -23,12 +22,12 @@ set_handlers_registrator(ScheldueClsHandler)
 
 class CabsScheldue(Observer):
     @Handler(Filter().cmnd("start"))
-    async def start_hndler(message):
-        await Actions.answer(message, "Рад видеть!")
+    async def start_hndler(message:ABCMsger):
+        await message.answer(message, "Рад видеть!")
 
     @Handler(Filter().in_text("name2"))
-    async def cab8(message):
-        await Actions.answer(message, "Вы воспользовались кнопкой!")
+    async def cab8(message:ABCMsger):
+        await message.answer(message, "Вы воспользовались кнопкой!")
 
 class VKCabsScheldue(CabsScheldue, VKBottleComponent):    
     ...

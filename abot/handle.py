@@ -1,99 +1,19 @@
-from abc import ABC , abstractmethod
-from typing import List
-from abot.mediator import Mediator, purefunc
-from abot.messaging import MsgerFactory
-import inspect
-
-class FilterMethods():
-    """Базовый класс определяющий общьий интерфейс фильтров"""
-    #@abstractmethod
-    def func(self, f:callable): """Фильтр принимающий в качестве параметра функцию и возвращающий объект для обёртывания"""
-    #@abstractmethod
-    def text(self, text):"""Фильтр сравнивающий на полное соответствие текста"""
-    #@abstractmethod
-    def in_text(self, text):"""Фильтр проверяет наличие подстроки в тексте сообщения"""
-    #@abstractmethod
-    def cmnd(self, text):"""Фильтр реагирует на сообщени команды начинающееся с '/'"""
-    #@abstractmethod
-    def photo(self):"""Фильтр реагирует когда присылают сообщение-фото"""
-    #@abstractmethod
-    def video(self):"""Фильтр реагирует когда присылают сообщение-видео"""
-    #@abstractmethod
-    def audio(self):"""Фильтр реагирует когда присылают сообщение-аудио"""
-    #@abstractmethod
-    def document(self):"""Фильтр реагирует когда присылают сообщение-документ"""
-    #@abstractmethod
-    def location(self):"""Фильтр реагирует когда присылают сообщение-локацию"""
-    #@abstractmethod
-    def voice(self):"""Фильтр реагирует когда присылают сообщение-голос"""
-    #@abstractmethod
-    def sticker(self):"""Фильтр реагирует когда присылают стикер"""
-
-class Filter(FilterMethods):
-    """Класс посредник предоставляет доступ к представлению фильтра. Конкретная реализация (подкласс ABCFilter)
-    определяется на этапе регистрации класса-хэндлера в ядре от компонента"""
-    __filter_imp:"ABCFilter" = None
-    __filter_methods:List = None
-    __filter_methods = [i for i in FilterMethods.__dict__.keys() if not i.startswith("_")]
-
-    def __init__(self):
-        self.filters = []
-
-    def __getattribute__(self, name):
-        if self.__filter_methods is not None and name in self.__filter_methods:
-            def wrapper(func):
-                def wrap(self:"Filter", *args):
-                    f_params = list(inspect.signature(func).parameters.values())[1:]
-                    if len(args) != len(f_params): raise TypeError("Передано неверное количество аргументов")
-                    self.filters.append([func.__name__, *args])
-                    return self
-            return wrapper(super().__getattribute__(name))
-        return super().__getattribute__(name)
-
-    # def wrapper(self, func):
-    #     #@wraps(func) - сохраняет метаданные о абстратктной приоде функции, поэтоу его тут нельзя использовать, сигнатура подтягивается из родителя
-    #     def wrap(self:"Filter", *args):
-    #         f_params = list(inspect.signature(func).parameters.values())[1:]
-    #         if len(args) != len(f_params): raise TypeError("Передано неверное количество аргументов")
-    #         self.filters.append([func.__name__, *args])
-    #         return self
-    #     return wrap
-
-    @property
-    def filter_imp(self):return self.__filter_imp
-    @filter_imp.setter
-    def filter_imp(self, new): self.__filter_imp = new
-
-    @purefunc
-    def ivoke_imp(self)-> List[callable] | None:
-        """Возвращает фильтры полученные от компонента, используя полиморфную связь через базовый FilterMethods"""
-        if self.filter_imp is None: return None
-        final_filters = []
-        for f in self.filters:
-            final_filters.append(self.filter_imp.__getattribute__(f[0])(*f[1:]))
-        return final_filters
-
-class ABCFilter(FilterMethods):
-    """Методы наследников этого класса должны переопределять методы-фильтры для возвращения фильтрующего обьекта соответствующей библиотеки"""
-    @abstractmethod
-    def func(self, f):pass
-    def text(self, text): return self.func(lambda x : x.text == text)
-    def in_text(self, text): return self.func(lambda x : text in x.text)
-    def cmnd(self, text): return self.func(lambda x : x.text == f"/{text}")
+from  abot.message import MsgerFactory
+from abot.filter import Filter
 
 class Handler():
     '''Декоратор, помечающий ядру, что этот медод является хэндлером. В конструкторе указываются экземпляры Filter'''
     def __init__(self, *filters:Filter):
         self.filters = filters
-        self.is_set = False
+        self.is_wrapped = False
 
-    def __call__(self, func = None, *args, **kwds):
-        if not self.is_set:
-            self.func = func
-            self.is_set = True
+    def __call__(self, func_or_args = None, *args, **kwds):
+        if not self.is_wrapped:
+            self.func = func_or_args
+            self.is_wrapped = True
             return self
-        if func is not None: func = MsgerFactory.make_msger(func)
-        return self.func(func, *args, **kwds)
+        if func_or_args is not None: func_or_args = MsgerFactory.make_msger(func_or_args)
+        return self.func(func_or_args, *args, **kwds)
     
     @property
     def __code__(self):
