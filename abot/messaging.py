@@ -1,34 +1,34 @@
 from abc import ABC, abstractmethod
-from typing import List, Any, Dict, Iterable
+from typing import List, Any, Dict, Iterable,Callable
 from abot.mediator import Mediator, purefunc
 
 class MsgerMetods(ABC):
     """Базовый класс определяющий общьий интерфейс мессаджеров"""
     @abstractmethod
-    async def answer(msg, text:str):"""Отвечает на сообщение пользователя"""
+    async def answer(self,text:str):"""Отвечает на сообщение пользователя"""
     @abstractmethod
-    async def reply(msg, text:str):""" """
+    async def reply(self,text:str):""" """
     @abstractmethod
-    async def delete(msg):""" """
+    async def delete(self,):""" """
     @abstractmethod
-    async def send_reply_kboard(msg, keyboard:Keyboard, text:str|None = None):""" """
+    async def send_reply_kboard(self,keyboard:"Keyboard", text:str|None = None):""" """
     @abstractmethod
-    async def send_inline_kboard(msg, keyboard:Keyboard, text:str|None = None):""" """
+    async def send_inline_kboard(self,keyboard:"Keyboard", text:str|None = None):""" """
 
-class Actions(MsgerMetods, Mediator):
-    """Класс-посредник, реализующий отправку сообщений и их чтение"""
-    def wrapper(self, func:function):
-        @staticmethod
-        #@wraps(func) необязательно использовать (даже не рекомендованно из-за возможного сохранения абстрактной природы метода), сигнатура подтягивается из родителя
-        async def wrap(msg, *args):
-            msger: ABCMsger = MsgerFactory.make_msger(msg)
-            await msger.__getattribute__(func.__name__)(msg, *args)
-        return wrap
-    @purefunc
-    @staticmethod
-    def get_msg(msg):
-        """Возвращает экземпляр ABCMSger для этого сообщения"""
-        return MsgerFactory.make_msger(msg)
+# class Actions(MsgerMetods, Mediator):
+#     """Класс-посредник, реализующий отправку сообщений и их чтение"""
+#     def wrapper(self, func:Callable):
+#         @staticmethod
+#         #@wraps(func) необязательно использовать (даже не рекомендованно из-за возможного сохранения абстрактной природы метода), сигнатура подтягивается из родителя
+#         async def wrap(msg, *args):
+#             msger: ABCMsger = MsgerFactory.make_msger(msg)
+#             await msger.__getattribute__(func.__name__)(msg, *args)
+#         return wrap
+#     @purefunc
+#     @staticmethod
+#     def get_msg(msg):
+#         """Возвращает экземпляр ABCMSger для этого сообщения"""
+#         return MsgerFactory.make_msger(msg)
 
 class ABCMsger(MsgerMetods):
     """Методы наследников этого класса должны переопределять методы для выполнения действия в соответствующей библиотеке"""
@@ -93,7 +93,7 @@ class Sender():
 
 class Keyboard():
     """Клавиатура инлайн или реплай. В конструкторе указываются списки с информацией о кнопке. Каждый список - это ряд кнопок. Информация о кнопках - это список название:дата. Пример:  [["b11", "data"], ["b12","data"]], [["b21", "data"], ["b22","data"], ["b23", "data"]] """
-    def __init__(self, *frame:List[str,str]):
+    def __init__(self, *frame:List[str]):
         """ В конструкторе указываются списки с информацией о кнопке. Каждый список - это ряд кнопок. Информация о кнопках - это список название:дата. Пример:  [["b11", "data"], ["b12","data"]], [["b21", "data"], ["b22","data"], ["b23", "data"]] """
         self.buttons:List[Button] = []
         self.row = -1

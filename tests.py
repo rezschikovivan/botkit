@@ -1,9 +1,8 @@
 import time
 t1 = time.time()
 
-from abot import Filter, Handler, Actions
+from abot import Filter, Handler
 from abot.vk_component import VKBottleComponent
-
 
 t2 = time.time()
 print(t2-t1)
@@ -29,20 +28,22 @@ tgram_token = tokens.tgram_token
 class Echo():
     @Handler(Filter().in_text("прив"))
     async def cab1(message):
-        await Actions.answer(message, "Рад видеть!")
+        await message.answer("Hello")
+        print(type(message))
+        print(message.msg.text)
 
     @Handler(Filter().in_text("name2"))
     async def cab8(message):
-        await Actions.answer(message, "Вы воспользовались кнопкой!")
+        await message.answer(message, "Вы воспользовались кнопкой!")
 
 class VKEcho(Echo, VKBottleComponent):    
     TOKEN = vk_token
 
-    @Handler()
-    async def cab2(message):
+    #@Handler()
+    #async def cab2(message):
         #Actions.get_msg(message).sender
-        user = await Actions.get_msg(message).sender#, await Actions.get_msg(message).sender.last_name)
-        print(user.first_name)
+        #user = await Actions.get_msg(message).sender#, await Actions.get_msg(message).sender.last_name)
+        #print(user.first_name)
         # print("ФОТО:  ", Actions.get_msg(message).photo)
         # print("ДОКУМЕНТ:  ", Actions.get_msg(message).document)
         # print("АУДИО:  ", Actions.get_msg(message).audio)

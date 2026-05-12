@@ -23,7 +23,7 @@ class MetaMediator(ABCMeta):
         return cls.__realize_abstractmethods(cls.__find_abstractmethods_in_bases(bases), realization)
     
     @classmethod
-    def __realize_abstractmethods(cls, methods:dict[str, function], wrap:Callable)->Dict[str,Callable]:
+    def __realize_abstractmethods(cls, methods:dict[str, Any], wrap:Callable)->Dict[str,Callable]:
         """Реализует абстрактные (переданные) методы """
         implemention = {}
         for k,v in methods.items():
@@ -31,7 +31,7 @@ class MetaMediator(ABCMeta):
         return implemention
 
     @classmethod
-    def __find_abstractmethods_in_bases(cls, bases:Iterable[object])->Dict[str, function]:
+    def __find_abstractmethods_in_bases(cls, bases:Iterable[object])->Dict[str, Callable]:
         """Находит в родителях абстрактные"""
         methods_to_implement:Dict[str, function] = {}
         for b in bases:

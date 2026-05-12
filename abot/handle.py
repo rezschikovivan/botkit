@@ -1,48 +1,63 @@
 from abc import ABC , abstractmethod
 from typing import List
 from abot.mediator import Mediator, purefunc
+from abot.messaging import MsgerFactory
 import inspect
 
-class FilterMethods(ABC):
+class FilterMethods():
     """Базовый класс определяющий общьий интерфейс фильтров"""
-    @abstractmethod
+    #@abstractmethod
     def func(self, f:callable): """Фильтр принимающий в качестве параметра функцию и возвращающий объект для обёртывания"""
-    @abstractmethod
+    #@abstractmethod
     def text(self, text):"""Фильтр сравнивающий на полное соответствие текста"""
-    @abstractmethod
+    #@abstractmethod
     def in_text(self, text):"""Фильтр проверяет наличие подстроки в тексте сообщения"""
-    @abstractmethod
+    #@abstractmethod
     def cmnd(self, text):"""Фильтр реагирует на сообщени команды начинающееся с '/'"""
-    @abstractmethod
+    #@abstractmethod
     def photo(self):"""Фильтр реагирует когда присылают сообщение-фото"""
-    @abstractmethod
+    #@abstractmethod
     def video(self):"""Фильтр реагирует когда присылают сообщение-видео"""
-    @abstractmethod
+    #@abstractmethod
     def audio(self):"""Фильтр реагирует когда присылают сообщение-аудио"""
-    @abstractmethod
+    #@abstractmethod
     def document(self):"""Фильтр реагирует когда присылают сообщение-документ"""
-    @abstractmethod
+    #@abstractmethod
     def location(self):"""Фильтр реагирует когда присылают сообщение-локацию"""
-    @abstractmethod
+    #@abstractmethod
     def voice(self):"""Фильтр реагирует когда присылают сообщение-голос"""
-    @abstractmethod
+    #@abstractmethod
     def sticker(self):"""Фильтр реагирует когда присылают стикер"""
 
-class Filter(FilterMethods, Mediator):
+class Filter(FilterMethods):
     """Класс посредник предоставляет доступ к представлению фильтра. Конкретная реализация (подкласс ABCFilter)
     определяется на этапе регистрации класса-хэндлера в ядре от компонента"""
     __filter_imp:"ABCFilter" = None
+    __filter_methods:List = None
+    __filter_methods = [i for i in FilterMethods.__dict__.keys() if not i.startswith("_")]
+
     def __init__(self):
         self.filters = []
 
-    def wrapper(self, func):
-        #@wraps(func) - сохраняет метаданные о абстратктной приоде функции, поэтоу его тут нельзя использовать, сигнатура подтягивается из родителя
-        def wrap(self:Filter, *args):
-            f_params = list(inspect.signature(func).parameters.values())[1:]
-            if len(args) != len(f_params): raise TypeError("Передано неверное количество аргументов")
-            self.filters.append([func.__name__, *args])
-            return self
-        return wrap
+    def __getattribute__(self, name):
+        if self.__filter_methods is not None and name in self.__filter_methods:
+            def wrapper(func):
+                def wrap(self:"Filter", *args):
+                    f_params = list(inspect.signature(func).parameters.values())[1:]
+                    if len(args) != len(f_params): raise TypeError("Передано неверное количество аргументов")
+                    self.filters.append([func.__name__, *args])
+                    return self
+            return wrapper(super().__getattribute__(name))
+        return super().__getattribute__(name)
+
+    # def wrapper(self, func):
+    #     #@wraps(func) - сохраняет метаданные о абстратктной приоде функции, поэтоу его тут нельзя использовать, сигнатура подтягивается из родителя
+    #     def wrap(self:"Filter", *args):
+    #         f_params = list(inspect.signature(func).parameters.values())[1:]
+    #         if len(args) != len(f_params): raise TypeError("Передано неверное количество аргументов")
+    #         self.filters.append([func.__name__, *args])
+    #         return self
+    #     return wrap
 
     @property
     def filter_imp(self):return self.__filter_imp
@@ -77,6 +92,7 @@ class Handler():
             self.func = func
             self.is_set = True
             return self
+        if func is not None: func = MsgerFactory.make_msger(func)
         return self.func(func, *args, **kwds)
     
     @property

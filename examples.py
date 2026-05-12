@@ -304,14 +304,14 @@
 #                 self.buttons.append(Button(row, column, i[0],i[1]))
 # Keyboard([ [ [1,2],[1,2] ],  [ [1,2],[1,2] ] ])
 #mport abot.utils
-from vkbottle import Bot, GroupEventType, GroupTypes, Callback
-from vkbottle.bot import Message
-from vkbottle import Keyboard, Callback
-from vkbottle.modules import json
-import tokens
-from vkbottle.dispatch.rules.base import PayloadRule
+# from vkbottle import Bot, GroupEventType, GroupTypes, Callback
+# from vkbottle.bot import Message
+# from vkbottle import Keyboard, Callback
+# from vkbottle.modules import json
+# import tokens
+# from vkbottle.dispatch.rules.base import PayloadRule
 
-TOKEN = tokens.vk_token
+# TOKEN = tokens.vk_token
 # bot = Bot(token=TOKEN)
 
 # @bot.on.message(text="меню")
@@ -369,12 +369,25 @@ TOKEN = tokens.vk_token
 # if __name__ == "__main__":
 #     print(1)
 #     bot.run_forever()
+class B:
+    def foo(self):
+        print(self.slot)
 
 class A:
-    slot = 5
-    def foo(self):
-        print(self.slot)
-class B(A):
-    def foo(self):
-        print(self.slot)
-B().foo()
+    # def __init__(self):
+    #     print("ii")
+    def __foo__(self): return "text"
+
+    def __get__(self, instance, owner):
+        print("get")
+
+    def __getattribute__(self, name):
+        print("attribute ", name)
+        if name == "__foo__":
+            def wrapper(func):
+                def y(x): return x*2
+                return y
+            return wrapper(super().__getattribute__(name))
+        return super().__getattribute__(name)
+
+print(A().__foo__(5))

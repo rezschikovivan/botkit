@@ -1,6 +1,6 @@
 from abot.core import BaseComponent, ABCFilter
 from abot.messaging import ABCMsger,Button,Sender
-import abot.messaging
+from abot.messaging import Keyboard
 from typing import Dict, Any
 import asyncio
 from vkbottle.dispatch.rules.base import AttachmentTypeRule, PayloadRule
@@ -48,21 +48,21 @@ class VKMsger(ABCMsger):
     @classmethod
     def msg_type(cls):
         return Message
-    async def answer(self, msg:Message, text):
-        return await msg.answer(text)
-    async def delete(self, msg:Message):
+    async def answer(self, text):
+        return await self.msg.answer(text)
+    async def delete(self):
         raise RuntimeError("VKBottleComponent пока не умеет удалять сообщения (я не нашел)")
-    async def reply(self, msg:Message, text):
-        await msg.reply(text)
-    async def send_reply_kboard(self, msg:Message, keyboard:Keyboard, text:str|None = None):
+    async def reply(self, text):
+        await self.msg.reply(text)
+    async def send_reply_kboard(self, keyboard:Keyboard, text:str|None = None):
         vk_keyboard:Keyboard = Keyboard(True, False)
         self.create_vk_kboard(vk_keyboard, keyboard)
-        await msg.answer(text, keyboard=vk_keyboard)
-    async def send_inline_kboard(self, msg:Message, keyboard:abot.messaging.Keyboard, text:str|None = None):
+        await self.msg.answer(text, keyboard=vk_keyboard)
+    async def send_inline_kboard(self, keyboard:Keyboard, text:str|None = None):
         vk_keyboard:Keyboard = Keyboard(False, True)
         self.create_vk_kboard(vk_keyboard, keyboard)
-        await msg.answer(text, keyboard=vk_keyboard)
-    def create_vk_kboard(self, vk_keyboard:Keyboard, keyboard:abot.messaging.Keyboard):
+        await self.msg.answer(text, keyboard=vk_keyboard)
+    def create_vk_kboard(self, vk_keyboard:Keyboard, keyboard:Keyboard):
         row = 0
         for b in keyboard.buttons:
             if b.row == row:

@@ -45,11 +45,11 @@ class ClsHandler():
         for i in all_attrs.values():
             if isinstance(i, Handler):
                 fltrs = []
-                for f in i.filters:
+                for filter in i.filters:
                     if base_cmpnt.get_filter() is None: break
-                    f.filter_imp = base_cmpnt.get_filter()() if isinstance(base_cmpnt.get_filter()(), ABCFilter) else None
-                    if f.filter_imp is None: break
-                    fltrs.extend(f.ivoke_imp())
+                    filter.filter_imp = base_cmpnt.get_filter()() if isinstance(base_cmpnt.get_filter()(), ABCFilter) else None
+                    if filter.filter_imp is None: break
+                    fltrs.extend(filter.ivoke_imp())
                 base_cmpnt.register_handler(token, i, *fltrs)
         return (mcs, name, bases, attrs)
 
@@ -77,7 +77,7 @@ class ClsHandler():
             if not n.startswith("_"):
                 all_attrs[n] = a
         return all_attrs
-    def __get_parent_basecmpnt_subclass(self, bases: Tuple[object], name:str = "НЕ_УКАЗАН")->BaseComponent:
+    def __get_parent_basecmpnt_subclass(self, bases: Tuple[object], name:str = "НЕ_УКАЗАН")->"BaseComponent":
         """Ищет в кортеже классов-родителей подкласс BaseComponent"""
         base_cmpnt = None
         for b in bases:
