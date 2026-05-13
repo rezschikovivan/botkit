@@ -55,9 +55,9 @@ class module(ModuleType):
         )
         return result
 
-from abot.message import ABCMsger, Sender, Keyboard, Button
+from abot.message import BaseMsg, Sender, Keyboard, Button
 from abot.handle import Handler
-from abot.filter import Filter, ABCFilter
+from abot.filter import Filter, BaseFilterImplementor
 from abot.core import start_bots, BaseComponent, ClsHandler, ClsComponenter, CoreMeta, set_cmpnts_registrator, set_handlers_registrator
 
 # keep a reference to this module so that it's not garbage collected
@@ -74,6 +74,6 @@ new_module.__dict__.update(
         "__version__": __version__,
         "__all__": tuple(object_origins) + tuple(attribute_modules) 
         #импортировать сразу
-        + tuple([BaseComponent, ClsHandler, ClsComponenter, CoreMeta, set_cmpnts_registrator, set_handlers_registrator,start_bots, Filter, Handler, ABCFilter, ABCMsger, Sender, Keyboard, Button])
+        + tuple([BaseComponent, ClsHandler, ClsComponenter, CoreMeta, set_cmpnts_registrator, set_handlers_registrator,start_bots, Filter, Handler, BaseFilterImplementor, BaseMsg, Sender, Keyboard, Button])
     }
 )

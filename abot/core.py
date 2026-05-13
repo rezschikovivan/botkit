@@ -1,7 +1,7 @@
 from abot.handle import Handler
-from abot.filter import ABCFilter
+from abot.filter import BaseFilterImplementor
 from typing import List,Dict, Coroutine,Any,  Set, Tuple
-from abot.message import ABCMsger, MsgerFactory
+from abot.message import BaseMsg, MsgFactory
 from abc import ABCMeta, abstractmethod
 import asyncio
     
@@ -16,7 +16,7 @@ class ClsComponenter():
 
     def after(cls, new_cls:"BaseComponent", mcs, name, bases, attrs): 
         """Вызывается после регистрации и проверки имплементации абстрактных методов компонента. Выполняет регистрацию компонена в фабрике сообщений messaging.MsgerFactory"""
-        MsgerFactory.registr_component(new_cls.get_messager())
+        MsgFactory.registr_component(new_cls.get_messager())
         if new_cls.get_messager() is None: print(f"Warning! {name}.get_messager() not returns ABCMessager. The functionality of sending messages and related features will be unavailable.")
         if new_cls.get_filter() is None: print(f"Warning! {name}.get_filter() not returns ABCFilter. The functionality of filtering messages and related features will be unavailable.")
 
@@ -48,7 +48,7 @@ class ClsHandler():
                 fltrs = []
                 for filter in i.filters:
                     if base_cmpnt.get_filter() is None: break
-                    filter.filter_imp = base_cmpnt.get_filter()() if isinstance(base_cmpnt.get_filter()(), ABCFilter) else None
+                    filter.filter_imp = base_cmpnt.get_filter()() if isinstance(base_cmpnt.get_filter()(), BaseFilterImplementor) else None
                     if filter.filter_imp is None: break
                     fltrs.extend(filter.ivoke_imp())
                 base_cmpnt.register_handler(token, i, *fltrs)
@@ -160,11 +160,11 @@ class BaseComponent(metaclass=CoreMeta):
     
     @classmethod
     @abstractmethod
-    def get_filter(cls)-> ABCFilter|None:
+    def get_filter(cls)-> BaseFilterImplementor|None:
         """Возвращает реализованный подкласс ABCFilter."""
     @classmethod
     @abstractmethod
-    def get_messager(cls)-> ABCMsger|None:
+    def get_messager(cls)-> BaseMsg|None:
         """Возвращает реализованный подкласс ABCMsger."""
     @classmethod
     @abstractmethod

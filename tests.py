@@ -1,7 +1,7 @@
 import time
 t1 = time.time()
 
-from abot import Filter, Handler, ClsHandler, Keyboard, ABCMsger
+from abot import Filter, Handler, ClsHandler, Keyboard, BaseMsg
 from abot.vkbottle_component import VKBottleComponent
 
 t2 = time.time()
@@ -27,7 +27,7 @@ tgram_token = tokens.tgram_token
 
 class Echo():
     @Handler(Filter().in_text("Привет"))
-    async def cab1(message:ABCMsger):
+    async def cab1(message:BaseMsg):
         await message.answer("Hello")
         print(type(message))
         print(message.text)

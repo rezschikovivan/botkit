@@ -1,5 +1,5 @@
-from abot.core import BaseComponent, ABCFilter
-from abot.message import ABCMsger,Button,Sender
+from abot.core import BaseComponent, BaseFilterImplementor
+from abot.message import BaseMsg,Button,Sender
 from abot.message import Keyboard
 from typing import Dict, Any
 import asyncio
@@ -10,7 +10,7 @@ from vkbottle.bot import Message, Bot
 from vkbottle import Keyboard, OpenLink, Callback, Text
 from vkbottle_types.objects import UsersUserFull
 
-class VKFilter(ABCFilter):
+class VKFilter(BaseFilterImplementor):
     """Реализует работу с фильтрами vkbottle"""
     def func(self, f):
         class CustomRule(ABCRule[Message]):
@@ -40,7 +40,7 @@ class VKFilter(ABCFilter):
     def sticker(self):
         return AttachmentTypeRule("sticker")
     
-class VKMsger(ABCMsger):
+class VKMsger(BaseMsg):
     """Реализует взаимодействие спользователем вк (отправка сообщений и тп)"""
     msg:Message# нужно чтобы интерпритатор видел тип поля
     def __init__(self, msg):

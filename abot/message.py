@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Any, Dict, Iterable, Callable
 
-class MsgerMetods(ABC):
+class MsgMetods(ABC):
     """Базовый класс определяющий общьий интерфейс мессаджеров"""
     @abstractmethod
     async def answer(self,text:str):"""Отвечает на сообщение пользователя"""
@@ -14,7 +14,7 @@ class MsgerMetods(ABC):
     @abstractmethod
     async def send_inline_kboard(self,keyboard:"Keyboard", text:str|None = None):""" """
 
-class ABCMsger(MsgerMetods):
+class BaseMsg(MsgMetods):
     """Методы наследников этого класса должны переопределять методы для выполнения действия в соответствующей библиотеке"""
     @abstractmethod
     def __init__(self, msg):
@@ -52,19 +52,19 @@ class ABCMsger(MsgerMetods):
     @abstractmethod
     def msg_type(cls):"""Возвращает тип, который будет приходить в хэндлеры этой библиотеки"""
 
-class MsgerFactory():
-    msges: Dict[str, ABCMsger] = {}
+class MsgFactory():
+    msges: Dict[str, BaseMsg] = {}
 
     @classmethod
-    def make_msger(cls, msg:Any)->ABCMsger:
+    def make_msg(cls, msg:Any)->BaseMsg:
         """Возвращает мессаджер соответствующий типу сообщения"""
         return cls.msges[str(type(msg))](msg)
 
     @classmethod
-    def registr_component(cls, msger: ABCMsger|None):
+    def registr_component(cls, msger: BaseMsg|None):
         """Регистрирует компонент в фабрике мессаджеров"""
         if msger is None: return
-        if not issubclass(msger, ABCMsger): raise TypeError("Принимает в качестве аргумента только подклассы ABCMessage")
+        if not issubclass(msger, BaseMsg): raise TypeError("Принимает в качестве аргумента только подклассы ABCMessage")
         cls.msges[str(msger.msg_type())] = msger
 
 class Sender():
@@ -101,11 +101,11 @@ class Keyboard():
 
 class Button():
     """Класс-кнопка. Содержит информацию о строчке, колонке и названии кнопки."""
-    def __init__(self, row:int, column:int, text:str, action:str|Dict = None):
+    def __init__(self, row:int, col:int, text:str, action:str|Dict = None):
         self.is_callback = isinstance(action, dict)
         self.is_url = True if "http" in action and not self.is_callback else False
         self.row = row
-        self.column = column
+        self.col = col
         self.text = text
         self.action = action
 

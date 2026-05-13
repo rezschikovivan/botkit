@@ -31,7 +31,7 @@ class FilterMethods():
 class Filter(FilterMethods):
     """Класс посредник предоставляет доступ к представлению фильтра. Конкретная реализация (подкласс ABCFilter)
     определяется на этапе регистрации класса-хэндлера в ядре от компонента"""
-    __implementation:"ABCFilter" = None
+    __implementation:"BaseFilterImplementor" = None
     __filter_methods:List = [i for i in FilterMethods.__dict__.keys() if not i.startswith("_")]
 
     def __init__(self):
@@ -62,7 +62,7 @@ class Filter(FilterMethods):
             final_filters.append(self.filter_imp.__getattribute__(f[0])(*f[1:]))
         return final_filters
 
-class ABCFilter(FilterMethods, ABC):
+class BaseFilterImplementor(FilterMethods, ABC):
     """Методы наследников этого класса должны переопределять методы-фильтры для возвращения фильтрующего обьекта соответствующей библиотеки"""
     @abstractmethod
     def func(self, f):pass

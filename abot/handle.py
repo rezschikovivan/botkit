@@ -1,4 +1,4 @@
-from  abot.message import MsgerFactory
+from  abot.message import MsgFactory
 from abot.filter import Filter
 
 class Handler():
@@ -12,7 +12,7 @@ class Handler():
             self.func = func_or_args
             self.is_wrapped = True
             return self
-        if func_or_args is not None: func_or_args = MsgerFactory.make_msger(func_or_args)
+        if func_or_args is not None: func_or_args = MsgFactory.make_msg(func_or_args)
         return self.func(func_or_args, *args, **kwds)
     
     @property

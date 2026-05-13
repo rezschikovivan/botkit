@@ -1,10 +1,10 @@
-from abot.core import BaseComponent, ABCFilter, ABCMsger
+from abot.core import BaseComponent, BaseFilterImplementor, BaseMsg
 from typing import Dict
 from aiogram.types import Message
 from aiogram.filters import BaseFilter 
 from aiogram import Bot, Dispatcher
 
-class CustomFilter(BaseFilter):
+class CustomFilter(BaseFilterImplementor):
     def __init__(self, *func: callable):
         self.func = func
 
@@ -14,11 +14,11 @@ class CustomFilter(BaseFilter):
             return False
         else: return True
 
-class AiogramFilter(ABCFilter):
+class AiogramFilter(BaseFilterImplementor):
     def func(self, f):
         return CustomFilter(f)
     
-class AiogramMsger(ABCMsger):
+class AiogramMsger(BaseMsg):
     @classmethod
     def msg_type(cls):
         return Message
