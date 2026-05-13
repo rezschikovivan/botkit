@@ -1,4 +1,5 @@
 from abot.core import BaseComponent, BaseFilterImplementor, BaseMsg
+from abot.message import BaseMsg, Button, Sender, Keyboard
 from typing import Dict
 from aiogram.types import Message
 from aiogram.filters import BaseFilter 
@@ -17,6 +18,37 @@ class AiogramFilter(BaseFilterImplementor):
                     return False
                 else: return True
         return CustomFilter(f)
+    
+    def text(self, text):
+        return self.func(lambda x: x.text == text)
+    
+    def in_text(self, text):
+        return self.func(lambda x: text in (x.text or ""))
+    
+    def cmnd(self, text):
+        return self.func(lambda x: x.text == f"/{text}")
+    
+    def photo(self):
+        return self.func(lambda x: bool(x.photo))
+    
+    def video(self):
+        return self.func(lambda x: bool(x.video))
+    
+    def audio(self):
+        return self.func(lambda x: bool(x.audio))
+    
+    def document(self):
+        return self.func(lambda x: bool(x.document))
+    
+    def location(self):
+        return self.func(lambda x: bool(x.location))
+    
+    def voice(self):
+        return self.func(lambda x: bool(x.voice))
+    
+    def sticker(self):
+        return self.func(lambda x: bool(x.sticker))
+    
 #компонент должен реализовать абстрактный класс, проверить с помощю: AiogramMsg()
 class AiogramMsg(BaseMsg):
     @classmethod
@@ -24,6 +56,58 @@ class AiogramMsg(BaseMsg):
         return Message
     async def answer(msg:Message, text):
         return await msg.answer(text)
+    
+    async def reply(self, text):
+        return await self.msg.reply(text)
+    
+    async def delete(self):
+        return await self.msg.delete()
+    
+    async def send_reply_kboard(self, keyboard, text=None):
+        pass
+    
+    async def send_inline_kboard(self, keyboard, text=None):
+        pass
+    
+    @property
+    def date(self):
+        return self.msg.date
+    
+    @property
+    def text(self):
+        return self.msg.text or ""
+    
+    @property
+    def photo(self):
+        return self.msg.photo[-1] if self.msg.photo else None
+    
+    @property
+    def document(self):
+        return self.msg.document
+    
+    @property
+    def audio(self):
+        return self.msg.audio
+    
+    @property
+    def video(self):
+        return self.msg.video
+    
+    @property
+    def location(self):
+        return self.msg.location
+    
+    @property
+    def voice(self):
+        return self.msg.voice
+    
+    @property
+    async def sender(self):
+        user = self.msg.from_user
+        if user:
+            return Sender(user.id, user.first_name, user.last_name, user.username)
+        return Sender(0)
+
 #компонент должен реализовать абстрактный класс
 class AiogramComponent(BaseComponent):
     bots: Dict[str,Bot] = {}
