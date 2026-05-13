@@ -4,9 +4,10 @@ from aiogram.types import Message
 from aiogram.filters import BaseFilter 
 from aiogram import Bot, Dispatcher
 
+#компонент должен реализовать абстрактный класс, проверить с помощю: AiogramFilter()
 class AiogramFilter(BaseFilterImplementor):
     def func(self, f):
-        class CustomFilter(BaseFilterImplementor):
+        class CustomFilter():
             def __init__(self, *func: callable):
                 self.func = func
 
@@ -16,20 +17,20 @@ class AiogramFilter(BaseFilterImplementor):
                     return False
                 else: return True
         return CustomFilter(f)
-    
+#компонент должен реализовать абстрактный класс, проверить с помощю: AiogramMsg()
 class AiogramMsg(BaseMsg):
     @classmethod
     def msg_type(cls):
         return Message
     async def answer(msg:Message, text):
         return await msg.answer(text)
-
+#компонент должен реализовать абстрактный класс
 class AiogramComponent(BaseComponent):
     bots: Dict[str,Bot] = {}
     dispatchers: Dict[str,Dispatcher] = {}
     @classmethod
     def get_filter(cls):
-        pass
+        return AiogramFilter
     @classmethod
     def get_messager(cls):
         pass
