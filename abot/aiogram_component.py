@@ -4,28 +4,26 @@ from aiogram.types import Message
 from aiogram.filters import BaseFilter 
 from aiogram import Bot, Dispatcher
 
-class CustomFilter(BaseFilterImplementor):
-    def __init__(self, *func: callable):
-        self.func = func
-
-    def __call__(self, event)->bool:
-        for f in self.func:
-            if f(event): continue
-            return False
-        else: return True
-
 class AiogramFilter(BaseFilterImplementor):
     def func(self, f):
+        class CustomFilter(BaseFilterImplementor):
+            def __init__(self, *func: callable):
+                self.func = func
+
+            def __call__(self, event)->bool:
+                for f in self.func:
+                    if f(event): continue
+                    return False
+                else: return True
         return CustomFilter(f)
     
-class AiogramMsger(BaseMsg):
+class AiogramMsg(BaseMsg):
     @classmethod
     def msg_type(cls):
         return Message
     async def answer(msg:Message, text):
         return await msg.answer(text)
 
-# Класс-регистратор в aiogram
 class AiogramComponent(BaseComponent):
     bots: Dict[str,Bot] = {}
     dispatchers: Dict[str,Dispatcher] = {}

@@ -10,7 +10,7 @@ __version__ = "0.0.0"
 all_by_module = {
     "abot.core":["start_bots", "BaseComponent", "ClsHandler", "ClsComponenter", "CoreMeta", "set_cmpnts_registrator", "set_handlers_registrator"],
     "abot.handle": ["Handler"],
-    "abot.message": ["ABCMsger", "Sender", "Keyboard", "Button", "MsgerFactory"],
+    "abot.message": ["BaseMsg", "Sender", "Keyboard", "Button", "MsgFactory"],
     "abot.filter":["Filter", "ABCFilter"],
     "abot.aiogram_component": ["AiogramComponent", "AiogramFilter", "AiogramMsger"],
     "abot.vkbottle_component": ["VKBottleComponent", "VKFilter", "VKMsger"]

@@ -1,8 +1,8 @@
 import time
 t1 = time.time()
 
-from abot import Filter, Handler, ClsHandler, Keyboard, BaseMsg
-from abot.vkbottle_component import VKBottleComponent
+from abot import Filter, Handler, BaseMsg, Sender
+from abot.aiogram_component import AiogramComponent
 
 t2 = time.time()
 print(t2-t1)
@@ -33,11 +33,11 @@ class Echo():
         print(message.text)
 
     @Handler(Filter().in_text("name2"))
-    async def cab8(message):
+    async def cab8(message:BaseMsg):
         await message.answer(message, "Вы воспользовались кнопкой!")
 
-class VKEcho(Echo, VKBottleComponent):    
-    TOKEN = vk_token
+class VKEcho(Echo, AiogramComponent):    
+    TOKEN = tgram_token
 
     #@Handler()
     #async def cab2(message):
@@ -66,4 +66,4 @@ class VKEcho(Echo, VKBottleComponent):
 import asyncio
 print("works")
 #asyncio.run(start_bots())
-asyncio.run(VKBottleComponent.cretae_polling_tasks()[0])
+asyncio.run(AiogramComponent.cretae_polling_tasks()[0])

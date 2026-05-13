@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Any, Dict, Iterable, Callable
+from typing import List, Any, Dict, Iterable
 
 class MsgMetods(ABC):
     """Базовый класс определяющий общьий интерфейс мессаджеров"""
