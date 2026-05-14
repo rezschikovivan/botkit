@@ -1,14 +1,14 @@
 from abot.core import BaseComponent, BaseFilterImplementor, BaseMsg
-from abot.message import BaseMsg, Button, Sender, Keyboard
+from abot.message import BaseMsg, Sender, Keyboard
 from typing import Dict
-from aiogram.types import Message
-from aiogram.filters import BaseFilter 
+from aiogram.types import Message, KeyboardButton, InlineKeyboardButton 
+from aiogram.filters import BaseFilter
 from aiogram import Bot, Dispatcher
 
 #компонент должен реализовать абстрактный класс, проверить с помощю: AiogramFilter()
 class AiogramFilter(BaseFilterImplementor):
-    def func(self, f):
-        class CustomFilter():
+    def func(self, f: callable):
+        class CustomFilter(BaseFilter):
             def __init__(self, *func: callable):
                 self.func = func
 
@@ -19,56 +19,83 @@ class AiogramFilter(BaseFilterImplementor):
                 else: return True
         return CustomFilter(f)
     
-    def text(self, text):
-        return self.func(lambda x: x.text == text)
-    
-    def in_text(self, text):
-        return self.func(lambda x: text in (x.text or ""))
-    
-    def cmnd(self, text):
-        return self.func(lambda x: x.text == f"/{text}")
-    
-    def photo(self):
-        return self.func(lambda x: bool(x.photo))
-    
-    def video(self):
-        return self.func(lambda x: bool(x.video))
-    
-    def audio(self):
-        return self.func(lambda x: bool(x.audio))
-    
-    def document(self):
-        return self.func(lambda x: bool(x.document))
-    
-    def location(self):
-        return self.func(lambda x: bool(x.location))
-    
-    def voice(self):
-        return self.func(lambda x: bool(x.voice))
-    
-    def sticker(self):
-        return self.func(lambda x: bool(x.sticker))
-    
 #компонент должен реализовать абстрактный класс, проверить с помощю: AiogramMsg()
 class AiogramMsg(BaseMsg):
+    msg: Message
+    def __init__(self, msg: Message):
+        super().__init__(msg)
     @classmethod
     def msg_type(cls):
         return Message
-    async def answer(msg:Message, text):
-        return await msg.answer(text)
+    async def answer(self, text: str):
+        return await self.msg.answer(text)
     
-    async def reply(self, text):
+    async def reply(self, text: str) -> Message:
         return await self.msg.reply(text)
     
     async def delete(self):
         return await self.msg.delete()
     
-    async def send_reply_kboard(self, keyboard, text=None):
-        pass
     
-    async def send_inline_kboard(self, keyboard, text=None):
-        pass
+    async def send_reply_kboard(self, keyboard:Keyboard, text:str|None = None):
+        ai_keyboard:Keyboard = Keyboard(True, False)
+        self.create_ai_kboard(ai_keyboard, keyboard)
+        await self.msg.answer(text, keyboard=ai_keyboard)
+
+    def create_ai_kboard(self, keyboard: Keyboard) -> list[list[KeyboardButton]]:
+        row = []
+        current_row = []
+        current_row_index = 0 
+
+        for button in keyboard.buttons:
+            if button.row != current_row_index:
+                if current_row:
+                    row.append(current_row)
+                current_row = []
+                current_row_index = button.row
+            current_row.append(KeyboardButton(text=button.text))
+        if current_row:
+            row.append(current_row)
+        return row
+
+    async def send_inline_kboard(self, keyboard:Keyboard, text:str|None = None):
+        ai_keyboard:Keyboard = Keyboard(False, True)
+        self.create_ai_kboard(ai_keyboard, keyboard)
+        await self.msg.answer(text, keyboard=ai_keyboard)
     
+    def create_inline_kboard(self, keyboard: Keyboard) -> list[list[InlineKeyboardButton]]:
+        row = []
+        current_row = []
+        current_row_index = 0
+    
+        for button in keyboard.buttons:
+            if button.row != current_row_index:
+                if current_row:
+                    row.append(current_row)
+                current_row = []
+                current_row_index = button.row
+
+            if button.is_url:
+                inline_button = InlineKeyboardButton(
+                    text=button.text,
+                    url=button.action
+                )
+            elif button.is_callback:
+                inline_button = InlineKeyboardButton(
+                    text=button.text,
+                    callback_data=str(list(button.action.values())[0])
+                )
+            else:
+                inline_button = InlineKeyboardButton(
+                    text=button.text,
+                    callback_data=str(button.action) if button.action else button.text
+                )
+            current_row.append(inline_button)
+        if current_row:
+            row.append(current_row)
+        return row
+
+
     @property
     def date(self):
         return self.msg.date
@@ -105,8 +132,7 @@ class AiogramMsg(BaseMsg):
     async def sender(self):
         user = self.msg.from_user
         if user:
-            return Sender(user.id, user.first_name, user.last_name, user.username)
-        return Sender(0)
+            return None
 
 #компонент должен реализовать абстрактный класс
 class AiogramComponent(BaseComponent):
