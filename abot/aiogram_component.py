@@ -19,18 +19,40 @@ class AiogramFilter(BaseFilterImplementor):
                 else: return True
         return CustomFilter(f)
     
+    def photo(self):
+        return self.func(lambda x: bool(x.photo))
+    
+    def video(self):
+        return self.func(lambda x: bool(x.video))
+    
+    def audio(self):
+        return self.func(lambda x: bool(x.audio))
+    
+    def document(self):
+        return self.func(lambda x: bool(x.document))
+    
+    def location(self):
+        return self.func(lambda x: bool(x.location))
+    
+    def voice(self):
+        return self.func(lambda x: bool(x.voice))
+    
+    def sticker(self):
+        return self.func(lambda x: bool(x.sticker))
 #компонент должен реализовать абстрактный класс, проверить с помощю: AiogramMsg()
 class AiogramMsg(BaseMsg):
-    msg: Message
+    msg:Message
+
     def __init__(self, msg: Message):
+        self.msg = msg
         super().__init__(msg)
     @classmethod
     def msg_type(cls):
         return Message
-    async def answer(self, text: str):
+    async def answer(self, text):
         return await self.msg.answer(text)
     
-    async def reply(self, text: str) -> Message:
+    async def reply(self, text):
         return await self.msg.reply(text)
     
     async def delete(self):
@@ -38,11 +60,11 @@ class AiogramMsg(BaseMsg):
     
     
     async def send_reply_kboard(self, keyboard:Keyboard, text:str|None = None):
-        ai_keyboard:Keyboard = Keyboard(True, False)
-        self.create_ai_kboard(ai_keyboard, keyboard)
-        await self.msg.answer(text, keyboard=ai_keyboard)
+        tg_keyboard:Keyboard = Keyboard(True, False)
+        self.create_reply_kboard(keyboard)
+        await self.msg.answer(text, keyboard=tg_keyboard)
 
-    def create_ai_kboard(self, keyboard: Keyboard) -> list[list[KeyboardButton]]:
+    def create_reply_kboard(self, keyboard: Keyboard) -> list[list[KeyboardButton]]:
         row = []
         current_row = []
         current_row_index = 0 
@@ -59,9 +81,9 @@ class AiogramMsg(BaseMsg):
         return row
 
     async def send_inline_kboard(self, keyboard:Keyboard, text:str|None = None):
-        ai_keyboard:Keyboard = Keyboard(False, True)
-        self.create_ai_kboard(ai_keyboard, keyboard)
-        await self.msg.answer(text, keyboard=ai_keyboard)
+        tg_keyboard:Keyboard = Keyboard(False, True)
+        self.create_inline_kboard(keyboard)
+        await self.msg.answer(text, keyboard=tg_keyboard)
     
     def create_inline_kboard(self, keyboard: Keyboard) -> list[list[InlineKeyboardButton]]:
         row = []
@@ -132,7 +154,8 @@ class AiogramMsg(BaseMsg):
     async def sender(self):
         user = self.msg.from_user
         if user:
-            return None
+            return Sender(user.id, user.first_name, user.last_name, user.username)
+        return None
 
 #компонент должен реализовать абстрактный класс
 class AiogramComponent(BaseComponent):
