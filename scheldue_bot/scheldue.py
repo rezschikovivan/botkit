@@ -32,7 +32,7 @@ class Subject(ABC):
 # ТОЧКА ДОСТУПА К ДАННЫМ РАСПИСНАИЯ
 
 class ScheldueGetter(Subject):
-    schedule: Dict[str,List[Lesson]] = {} #ключ - дата, значени - список уроков
+    __schedule: Dict[str,List[Lesson]] = {} #ключ - дата, значени - список уроков
     _instance: "ScheldueGetter" = None
     __thread = None
     __schedule_changes: Dict[str,List] = {} # формат как у scheldue
@@ -63,8 +63,8 @@ class ScheldueGetter(Subject):
         print("Запуск таймера...")
         async def timer():
             while True:
-                await asyncio.sleep(minuts*60)
                 await self.refresh_schedule()
+                await asyncio.sleep(minuts*60)
                 print("Расписание обновлено")
         loop = asyncio.new_event_loop()
         loop.create_task(timer())
@@ -72,19 +72,21 @@ class ScheldueGetter(Subject):
     @property
     def scheldue(self):
         if self.__has_scheldue:
-            return self.schedule
+            return self.__schedule
         else:
             while not self.__has_scheldue:
                 time.sleep(1)
-            return self.schedule
+            return self.__schedule
     @property
     def groups(self):
         self.__refresh_groups()
         return self.__groups
+    @property
+    def days(self):
+        return self.__days
     @groups.setter
     def groups(self, value):
         self.groups = value
-
     def register_observer(self, o: Observer):
         print(f"Зарегистрирован: {o}")
         if o not in self.observers:
@@ -95,6 +97,36 @@ class ScheldueGetter(Subject):
     def notify_observers(self, changes:List):
         for o in self.observers:
             o.updates(changes)
+
+    def get_today(self):
+        today = date.today()
+        formatted_date = f"{today.day}.{today.month}.{today.year}"
+        return self.scheldue.get(formatted_date)
+    
+    def get_para(self):
+        today = date.today()
+        formatted_date = f"{today.day}.{today.month}.{today.year}"
+        h = datetime.time().hour
+        m = datetime.time().minute
+        day = None
+        for d in self.days:
+            if d.date == formatted_date:
+                day = d
+                break
+        else: 
+            raise KeyError()
+        
+        if day.week_day == "Понедельник":
+                return 
+        if day.week_day == "Суббота":
+                if h < 9 and m < 40:
+                    return 1
+                
+        else: 
+                return 
+        h = datetime.time().hour
+        m = datetime.time().minute
+
         
     async def refresh_schedule(self):
         for v in self.__schedule_changes.values(): # отчищаем старые изменения
@@ -102,17 +134,17 @@ class ScheldueGetter(Subject):
 
         async with aiohttp.ClientSession() as session:
             await self.__refresh_days(session) # обновляем дни
-            lsn_dates = self.schedule.keys() # получаем дни
+            lsn_dates = self.__schedule.keys() # получаем дни
             for day in self.__days: #для каждого дня
                 new_lessons = await self.__get_new_Lessons(day.date, session)# получаем уроки по датe
                 if day.date in lsn_dates: # если расписание на этот день уже было 
-                    if self.schedule[day.date] != new_lessons: # если уроки не совпадают
+                    if self.__schedule[day.date] != new_lessons: # если уроки не совпадают
                         self.__change_schedule(day.date, new_lessons)  # заменяем уроки
                 else:
-                    self.schedule[day.date] = new_lessons                  # если вообще не было такого дня добавляем уроки
+                    self.__schedule[day.date] = new_lessons                  # если вообще не было такого дня добавляем уроки
                     self.__schedule_changes[day.date] = new_lessons.copy() # сохраняем что доваили расписание на новый день
 
-        self.__has_scheldue = True
+        ScheldueGetter.__has_scheldue = True
         
         for i in self.__schedule_changes.values():
             if i is not []: # если есть изменения
@@ -137,32 +169,32 @@ class ScheldueGetter(Subject):
             cur.append(int(str(cur_date.month)))
             cur.append(int(str(cur_date.year)))
         cd = cretate_cur_date()
-        for d in self.schedule.keys():
+        for d in self.__schedule.keys():
             if is_outdated(d, cd):
-                od = self.schedule.pop(d)
+                od = self.__schedule.pop(d)
 
     def __change_schedule(self, date:str, changed:List): # возвращет разницу расписнаний
         self.__schedule_changes[date].clear() # удаляем прошлые изменения
 
-        if len(self.schedule[date]) == len(changed):  # изменили
+        if len(self.__schedule[date]) == len(changed):  # изменили
             for i in range(len(changed)):
-                if self.schedule[date][i] != changed[i]:# ищем все измененные записи
+                if self.__schedule[date][i] != changed[i]:# ищем все измененные записи
                     self.__schedule_changes[date].append(changed[i])
         else:
-            if len(self.schedule[date]) > len(changed):# убавили
-                for i in range(len(self.schedule[date])-len(changed)):
-                    self.__schedule_changes[date].append(self.schedule[date][-(i+1)])# сохраняем все убавленные
+            if len(self.__schedule[date]) > len(changed):# убавили
+                for i in range(len(self.__schedule[date])-len(changed)):
+                    self.__schedule_changes[date].append(self.__schedule[date][-(i+1)])# сохраняем все убавленные
                 for i in range(len(changed)):
-                    if self.schedule[date][i] != changed[i]:# ищем все измененные записи
+                    if self.__schedule[date][i] != changed[i]:# ищем все измененные записи
                         self.__schedule_changes[date].append(changed[i])
 
-            if len(self.schedule[date]) < len(changed):# прибавили
-                for i in range(len(changed)-len(self.schedule[date])):
+            if len(self.__schedule[date]) < len(changed):# прибавили
+                for i in range(len(changed)-len(self.__schedule[date])):
                     self.__schedule_changes[date].append(changed[-(i+1)])# сохраняем все добавленные
-                for i in range(len(self.schedule[date])):
-                    if self.schedule[date][i] != changed[i]:# ищем все измененные записи
+                for i in range(len(self.__schedule[date])):
+                    if self.__schedule[date][i] != changed[i]:# ищем все измененные записи
                         self.__schedule_changes[date].append(changed[i])
-        self.schedule[date] = changed #  применяем изменения
+        self.__schedule[date] = changed #  применяем изменения
         
     async def __get_new_Lessons(self, full_date:str, session: aiohttp.ClientSession)->List[Lesson]:# возвращает список уроков на указанный день
         actual_dates = await session.get("https://api.codescript.site/schedule/getByDate", params={'date':full_date})# получить файл на этот день
@@ -197,14 +229,8 @@ class ScheldueGetter(Subject):
 
 if __name__ == "__main__":
     print("hi")
-    # class A(Observer):
-
-    #     def update(self, changes):
-    #         print("updated")
-    # b = A()
-
-    # a = ScheldueGetter.get_instance()
-    # print(a.observers)
-
-    #s = [str(v) for v in a.schedule["18.3.2026"]]
-    #print(s)
+    s = ScheldueGetter.get_instance()
+    today = date.today()
+    formatted_date = f"{today.day}.{today.month}.{today.year}"
+    
+    print(s.get_today())

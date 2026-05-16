@@ -1,8 +1,10 @@
 import time
+
 t1 = time.time()
 
-from abot import Filter, Handler, BaseMsg, Sender
-from abot.aiogram_component import AiogramComponent
+from abot import Filter, Handler, BaseMsg, Sender, BaseComponent
+#from abot.aiogram_component import AiogramComponent
+from abot.vkbottle_component import VKBottleComponent
 
 t2 = time.time()
 print(t2-t1)
@@ -25,20 +27,22 @@ tgram_token = tokens.tgram_token
 
 # set_handlers_registrator(F)
 
-class Echo():
-    @Handler(Filter().in_text("Привет"))
-    async def cab1(message:BaseMsg):
-        await message.answer("Hello")
-        print(type(message))
-        print(message.text)
+class Echo(BaseComponent):
+
 
     @Handler(Filter().in_text("name2"))
-    async def cab8(message:BaseMsg):
+    async def cab8(self, message:BaseMsg):
+        print(self)
+        print(message)
         await message.answer(message, "Вы воспользовались кнопкой!")
 
-class VKEcho(Echo, AiogramComponent):    
-    TOKEN = tgram_token
-
+class VKEcho(Echo, VKBottleComponent):    
+    TOKEN = vk_token
+    @Handler(Filter().in_text("Привет"))
+    async def cab1(self, message:BaseMsg):
+        print(self)
+        print(message)
+        await message.answer("Hello")
     #@Handler()
     #async def cab2(message):
         #Actions.get_msg(message).sender
@@ -66,4 +70,4 @@ class VKEcho(Echo, AiogramComponent):
 import asyncio
 print("works")
 #asyncio.run(start_bots())
-asyncio.run(AiogramComponent.cretae_polling_tasks()[0])
+asyncio.run(VKBottleComponent.cretae_polling_tasks()[0])
