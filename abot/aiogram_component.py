@@ -45,7 +45,6 @@ class AiogramMsg(BaseMsg):
 
     def __init__(self, msg: Message):
         self.msg = msg
-        super().__init__(msg)
     @classmethod
     def msg_type(cls):
         return Message
