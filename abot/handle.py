@@ -5,11 +5,8 @@ class Handler():
     '''Декоратор, помечающий ядру, что этот медод является хэндлером. В конструкторе указываются экземпляры Filter'''
     def __init__(self, *filters:Filter):
         self.filters = filters
-        self.func_cls = "хаывдсч"
+        self.func_cls = None
         self.is_wrapped = False
-
-    def __get__(self, instance, owner):
-        print(instance, " ", owner)
 
     def __call__(self, func_or_msg = None, *args, **kwds):
         if not self.is_wrapped:

@@ -1,6 +1,6 @@
 """
-код ленивой инициализации модулей повзаимствован с https://github.com/pallets/werkzeug/tree/71eab19be2c83fb476de51275e2f9bdf69d5cc10
 """
+#код ленивой инициализации модулей повзаимствован с https://github.com/pallets/werkzeug/tree/71eab19be2c83fb476de51275e2f9bdf69d5cc10
 import sys
 from types import ModuleType
 

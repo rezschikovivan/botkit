@@ -26,21 +26,6 @@ set_handlers_registrator(ScheldueClsHandler())
 import tokens
 
 class CabsScheldue(Observer):
-    TOKEN = tokens.vk_token
-    scheldue = ScheldueGetter.get_instance()
-
-    def updates(cls, changes):
-        pass
-    
-    @Handler(Filter().cmnd("start"))
-    async def start_hndler(message:BaseMsg):
-        await message.answer(message, "Рад видеть!")
-
-    @Handler(Filter().in_text("name2"))
-    async def cab8(message:BaseMsg):
-        await message.answer(message, "Вы воспользовались кнопкой!")
-
-class VKCabsScheldue(CabsScheldue, VKBottleComponent):    
     all_cabs = ['308', '309', '310', '311', '312', '313', '314', '815', '316', '317', '318', '319', '320', '321', 
                 '023', '021', '019', '016', '017', '013', '007', '112', '105', '110', '103', '108', '101', '106', '104',
                 '229', '226', '227', '225', '222', '220', '218', '219', '217', '215', '213', '316', '214', '212', '211', '209', '210', '208', '207', '206', '205', '204', '203', '202', '201', '200', 
@@ -75,6 +60,11 @@ class VKCabsScheldue(CabsScheldue, VKBottleComponent):
     @Handler(Filter().in_text("кабинет"))
     async def send_free_cabs1(cls, message:BaseMsg):
         await message.send_inline_kboard(Keyboard([ ["1", "1"], ["2", "2"], ["3", "3"], ["4", "4"], ["5", "5"] ], [ ['6', "6"],['7', "7"], ['8', "8"], ['9', "9"] ]), "Выберите пару:")
+    TOKEN = tokens.vk_token
+    scheldue = ScheldueGetter.get_instance()
+
+class VKCabsScheldue(CabsScheldue, VKBottleComponent):    
+    ...
     
 import asyncio
 print("works")
