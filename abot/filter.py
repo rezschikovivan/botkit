@@ -6,27 +6,27 @@ import inspect
 class FilterMethods():
     """Базовый класс определяющий общьий интерфейс фильтров"""
     @abstractmethod
-    def func(self, f:callable): """Фильтр принимающий в качестве параметра функцию и возвращающий объект для обёртывания"""
+    def func(self, f:callable)->"Filter": """Фильтр принимающий в качестве параметра функцию и возвращающий объект для обёртывания"""
     @abstractmethod
-    def text(self, text):"""Фильтр сравнивающий на полное соответствие текста"""
+    def text(self, text)->"Filter":"""Фильтр сравнивающий на полное соответствие текста"""
     @abstractmethod
-    def in_text(self, text):"""Фильтр проверяет наличие подстроки в тексте сообщения"""
+    def in_text(self, text)->"Filter":"""Фильтр проверяет наличие подстроки в тексте сообщения"""
     @abstractmethod
-    def cmnd(self, text):"""Фильтр реагирует на сообщени команды начинающееся с '/'"""
+    def cmnd(self, text)->"Filter":"""Фильтр реагирует на сообщени команды начинающееся с '/'"""
     @abstractmethod
-    def photo(self):"""Фильтр реагирует когда присылают сообщение-фото"""
+    def photo(self)->"Filter":"""Фильтр реагирует когда присылают сообщение-фото"""
     @abstractmethod
-    def video(self):"""Фильтр реагирует когда присылают сообщение-видео"""
+    def video(self)->"Filter":"""Фильтр реагирует когда присылают сообщение-видео"""
     @abstractmethod
-    def audio(self):"""Фильтр реагирует когда присылают сообщение-аудио"""
+    def audio(self)->"Filter":"""Фильтр реагирует когда присылают сообщение-аудио"""
     @abstractmethod
-    def document(self):"""Фильтр реагирует когда присылают сообщение-документ"""
+    def document(self)->"Filter":"""Фильтр реагирует когда присылают сообщение-документ"""
     @abstractmethod
-    def location(self):"""Фильтр реагирует когда присылают сообщение-локацию"""
+    def location(self)->"Filter":"""Фильтр реагирует когда присылают сообщение-локацию"""
     @abstractmethod
-    def voice(self):"""Фильтр реагирует когда присылают сообщение-голос"""
+    def voice(self)->"Filter":"""Фильтр реагирует когда присылают сообщение-голос"""
     @abstractmethod
-    def sticker(self):"""Фильтр реагирует когда присылают стикер"""
+    def sticker(self)->"Filter":"""Фильтр реагирует когда присылают стикер"""
 
 class Filter(FilterMethods):
     """Класс посредник предоставляет доступ к представлению фильтра. Конкретная реализация (подкласс ABCFilter)
@@ -66,6 +66,6 @@ class BaseFilterImplementor(FilterMethods, ABC):
     """Методы наследников этого класса должны переопределять методы-фильтры для возвращения фильтрующего обьекта соответствующей библиотеки"""
     @abstractmethod
     def func(self, f):pass
-    def text(self, text): return self.func(lambda x : x.text == text)
-    def in_text(self, text): return self.func(lambda x : text in x.text)
-    def cmnd(self, text): return self.func(lambda x : x.text == f"/{text}")
+    def text(self, text:str): return self.func(lambda x : x.text.lower() == text.lower())
+    def in_text(self, text): return self.func(lambda x : text.lower() in x.text.lower())
+    def cmnd(self, text): return self.func(lambda x : x.text.lower() == f"/{text}".lower())

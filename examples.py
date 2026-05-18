@@ -369,25 +369,28 @@
 # if __name__ == "__main__":
 #     print(1)
 #     bot.run_forever()
-class B:
-    def foo(self):
-        print(self.slot)
+# class B:
+#     def foo(self):
+#         print(self.slot)
 
-class A:
-    # def __init__(self):
-    #     print("ii")
-    def __foo__(self): return "text"
+# class A:
+#     # def __init__(self):
+#     #     print("ii")
+#     def __foo__(self): return "text"
 
-    def __get__(self, instance, owner):
-        print("get")
+#     def __get__(self, instance, owner):
+#         print("get")
 
-    def __getattribute__(self, name):
-        print("attribute ", name)
-        if name == "__foo__":
-            def wrapper(func):
-                def y(x): return x*2
-                return y
-            return wrapper(super().__getattribute__(name))
-        return super().__getattribute__(name)
+#     def __getattribute__(self, name):
+#         print("attribute ", name)
+#         if name == "__foo__":
+#             def wrapper(func):
+#                 def y(x): return x*2
+#                 return y
+#             return wrapper(super().__getattribute__(name))
+#         return super().__getattribute__(name)
 
-print(A().__foo__(5))
+# print(A().__foo__(5))
+a = [308, 309, 310, 311, 312, 313, 314, 815, 316, 317, 318, 319, 320, 321, '023', '021', '019', '016', '017', '013', '007', 112, 105, 110, 103, 108, 101, 106, 104, 229, 226, 227, 225, 222, 220, 218, 219, 217, 215, 213, 316, 214, 212, 211, 209, 210, 208, 207, 206, 205, 204, 203, 202, 201, 200, 421, 419, 424, 422, 417, 420, 415, 418, 416, 413, 414, 411, 409, 412, 410, 407, 408, 406, 405, 404, 402, 403, 401, 400]
+A = map(str, a)
+print(list(A))

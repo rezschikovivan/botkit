@@ -1,6 +1,12 @@
+
 tokens.py
 
+venv314/
+venv3123/
+venv/
+.vscode/
 .env
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
