@@ -25,7 +25,7 @@ class BaseMsg(MsgMetods):
     def date(self):  """Возвращает дату сообщения"""
     @property
     @abstractmethod
-    def text(self):  """Возвращает текст сообщения"""
+    def text(self)->str:  """Возвращает текст сообщения"""
     # типы медиа
     @property
     @abstractmethod

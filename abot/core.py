@@ -19,7 +19,7 @@ class ClsComponenter():
         MsgFactory.registr_component(new_cls.get_messager())
         if new_cls.get_messager() is None: print(f"Warning! {name}.get_messager() not returns ABCMessager. The functionality of sending messages and related features will be unavailable.")
         if new_cls.get_filter() is None: print(f"Warning! {name}.get_filter() not returns ABCFilter. The functionality of filtering messages and related features will be unavailable.")
-
+        return (mcs, name, bases, attrs)
 class ClsHandler():
     """Класс реализующий работу по инициализации классов-хэндлеров"""
     base_cmpnts:Set["BaseComponent"] = set()
@@ -54,8 +54,12 @@ class ClsHandler():
                 base_cmpnt.register_handler(token, i, *fltrs)
         return (mcs, name, bases, attrs)
 
-    def after(self, new_cls, mcs, name, bases, attrs):
+    def after(self, new_cls, mcs, name, bases, attrs:Dict[str,Any]):
         """Вызывается после регистрации и проверки на реализации абстрактных методов класса-хэндлера""" 
+        for attr in attrs.values():
+            if isinstance(attr, Handler):
+                attr.func_cls = new_cls
+        return (mcs, name, bases, attrs)
 
     async def activate_pollings(self):
         """ Запускает поллинг для всех классов-хэндлеров"""
@@ -99,26 +103,26 @@ class CoreMeta(ABCMeta):
         if name == "BaseComponent":
             return super().__new__(mcs, name, bases, attrs)
         elif BaseComponent in bases: 
-            return super().__new__(*mcs.__generate_handler(name, bases, attrs))
-        else: 
             return super().__new__(*mcs.__generate_component(name, bases, attrs))
+        else: 
+            return super().__new__(*mcs.__generate_handler(name, bases, attrs))
     @classmethod
     def __generate_handler(mcs, name, bases, attrs):
-        """Выполняет ряд операций по созданию клс-хэндлера"""
-        mcs.__cls_component.before(mcs, name, bases, attrs)
-        new_values = mcs.__cls_component.registrate_cmpnt(mcs, name, bases, attrs)
-        cls = super().__new__(*new_values)
-        cls()
-        mcs.__cls_component.after(cls, *new_values)
-        return new_values
-    @classmethod
-    def __generate_component(mcs, name, bases, attrs):
         """Выполняет ряд операций по созданию компонента"""
         mcs.__cls_handler.before(mcs, name, bases, attrs)
         new_values = mcs.__cls_handler.registrate_handler(mcs, name, bases, attrs)
         cls = super().__new__(*new_values)
         cls()
-        mcs.__cls_handler.after(cls, *new_values)
+        new_values = mcs.__cls_handler.after(cls, *new_values)
+        return new_values
+    @classmethod
+    def __generate_component(mcs, name, bases, attrs):
+        """Выполняет ряд операций по созданию клс-хэндлера"""
+        mcs.__cls_component.before(mcs, name, bases, attrs)
+        new_values = mcs.__cls_component.registrate_cmpnt(mcs, name, bases, attrs)
+        cls = super().__new__(*new_values)
+        cls()
+        new_values = mcs.__cls_component.after(cls, *new_values)
         return new_values
     @classmethod
     def set_cls_componenter(cls, new_registrator: ClsComponenter):
@@ -129,7 +133,7 @@ class CoreMeta(ABCMeta):
     @classmethod
     def set_cls_handler(cls, new_registrator: ClsHandler):
         """Заменяет класс для работы с классами-хэндлерами внутри ядра"""
-        if issubclass(new_registrator, ClsHandler):
+        if issubclass(new_registrator.__class__, ClsHandler):
             cls.__cls_handler = new_registrator
         else: raise TypeError("Должен быть субкалссом: ClsHandler")
     @classmethod

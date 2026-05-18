@@ -1,7 +1,10 @@
 import time
+
 t1 = time.time()
 
-from abot import Filter, Handler, BaseMsg, Sender
+from abot import Filter, Handler, BaseMsg, Sender, BaseComponent, Keyboard
+#from abot.aiogram_component import AiogramComponent
+from abot.vkbottle_component import VKBottleComponent
 from abot.aiogram_component import AiogramComponent
 
 t2 = time.time()
@@ -25,45 +28,42 @@ tgram_token = tokens.tgram_token
 
 # set_handlers_registrator(F)
 
-class Echo():
-    @Handler(Filter().in_text("Привет"))
-    async def cab1(message:BaseMsg):
-        await message.answer("Hello")
-        print(type(message))
-        print(message.text)
+class Echo(BaseComponent):
 
     @Handler(Filter().in_text("name2"))
-    async def cab8(message:BaseMsg):
+    async def cab8(cls, message:BaseMsg):
         await message.answer(message, "Вы воспользовались кнопкой!")
 
-class VKEcho(Echo, AiogramComponent):    
+class VKEcho(Echo, VKBottleComponent):    
+    TOKEN = vk_token
+    @Handler(Filter().in_text("Привет"))
+    async def cab1(cls, message:BaseMsg):
+        await message.answer("Hello")
+    @Handler()
+    async def cab2(cls, message:BaseMsg):
+
+        user:Sender = await message.send_inline_kboard
+        print(user.first_name)
+        print("ФОТО:  ", message.photo)
+        print("ДОКУМЕНТ:  ", message.document)
+        print("АУДИО:  ", message.audio)
+        print("ГОЛОСОВОЕ:  ", message.voice)
+        print("ВИДЕО:  ", message.video)
+        print("ТЕКСТ:  ", message.text)
+        print("data:  ", message.date)
+
+
+class TGEcho(Echo, AiogramComponent):
     TOKEN = tgram_token
 
-    #@Handler()
-    #async def cab2(message):
-        #Actions.get_msg(message).sender
-        #user = await Actions.get_msg(message).sender#, await Actions.get_msg(message).sender.last_name)
-        #print(user.first_name)
-        # print("ФОТО:  ", Actions.get_msg(message).photo)
-        # print("ДОКУМЕНТ:  ", Actions.get_msg(message).document)
-        # print("АУДИО:  ", Actions.get_msg(message).audio)
-        # print("ГОЛОСОВОЕ:  ",Actions.get_msg(message).voice)
-        # print("ВИДЕО:  ", Actions.get_msg(message).video)
-        # print("ТЕКСТ:  ", Actions.get_msg(message).text)
-        # print("data:  ", Actions.get_msg(message).date)
-
-
-# class TGEcho(Echo, AiogramComponent):
-#     TOKEN = tgram_token
-
-#     @Handler(Filter().in_text("hi"))
-#     async def cab2(message):
-#         await Actions.send_inline_kboard(message, keyboard=Keyboard([ [["name", "adata"], ["name","data"]] ]),text="инлайн клавиатура")
-#     @Handler(Filter().text("hello"))
-#     async def cab3(message):
-#         await Actions.answer(message, "Кфбинет №22")
+    @Handler(Filter().in_text("hi"))
+    async def cab2(cls, message:BaseMsg):
+        await message.send_inline_kboard(message, keyboard=Keyboard([ [["name", "adata"], ["name","data"]] ]),text="инлайн клавиатура")
+    @Handler(Filter().text("hello"))
+    async def cab3(cls, message:BaseMsg):
+        await message.answer(message, "Кфбинет №22")
 
 import asyncio
 print("works")
 #asyncio.run(start_bots())
-asyncio.run(AiogramComponent.cretae_polling_tasks()[0])
+asyncio.run(VKBottleComponent.cretae_polling_tasks()[0])
