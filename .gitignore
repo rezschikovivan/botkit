@@ -3,7 +3,7 @@ tokens.py
 
 venv314/
 venv3123/
-.vscode
+.vscode/
 .env
 
 # Byte-compiled / optimized / DLL files
