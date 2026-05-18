@@ -1,7 +1,7 @@
 from abot.core import BaseComponent, BaseFilterImplementor, BaseMsg
 from abot.message import BaseMsg, Sender, Keyboard
 from typing import Dict
-from aiogram.types import Message, KeyboardButton, InlineKeyboardButton 
+from aiogram.types import Message, KeyboardButton, InlineKeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup
 from aiogram.filters import BaseFilter
 from aiogram import Bot, Dispatcher
 
@@ -44,7 +44,7 @@ class AiogramMsg(BaseMsg):
     msg:Message
 
     def __init__(self, msg: Message):
-        self.msg = msg
+        super().__init__(msg)
     @classmethod
     def msg_type(cls):
         return Message
@@ -57,64 +57,60 @@ class AiogramMsg(BaseMsg):
     async def delete(self):
         return await self.msg.delete()
     
-    
-    async def send_reply_kboard(self, keyboard:Keyboard, text:str|None = None):
-        tg_keyboard:Keyboard = Keyboard(True, False)
-        self.create_reply_kboard(keyboard)
-        await self.msg.answer(text, keyboard=tg_keyboard)
+async def send_reply_kboard(self, keyboard: Keyboard, text: str | None = None):
+    await self.msg.answer(
+        text, 
+        reply_markup=self._create_reply_keyboard(keyboard)
+    )
 
-    def create_reply_kboard(self, keyboard: Keyboard) -> list[list[KeyboardButton]]:
-        row = []
-        current_row = []
-        current_row_index = 0 
+    async def send_inline_kboard(self, keyboard: Keyboard, text: str | None = None):
+        await self.msg.answer(
+            text, 
+            reply_markup=self._create_inline_keyboard(keyboard)
+        )
 
-        for button in keyboard.buttons:
-            if button.row != current_row_index:
-                if current_row:
-                    row.append(current_row)
-                current_row = []
-                current_row_index = button.row
-            current_row.append(KeyboardButton(text=button.text))
-        if current_row:
-            row.append(current_row)
-        return row
+    def _create_reply_keyboard(self, keyboard: Keyboard) -> list[list[KeyboardButton]]:
+        """Создаёт reply клавиатуру и возвращает список строк с кнопками"""
+        rows = self._build_button_rows(keyboard, is_inline=False)
+        return rows
 
-    async def send_inline_kboard(self, keyboard:Keyboard, text:str|None = None):
-        tg_keyboard:Keyboard = Keyboard(False, True)
-        self.create_inline_kboard(keyboard)
-        await self.msg.answer(text, keyboard=tg_keyboard)
-    
-    def create_inline_kboard(self, keyboard: Keyboard) -> list[list[InlineKeyboardButton]]:
-        row = []
+    def _create_inline_keyboard(self, keyboard: Keyboard) -> list[list[InlineKeyboardButton]]:
+        """Создаёт inline клавиатуру и возвращает список строк с кнопками"""
+        rows = self._build_button_rows(keyboard, is_inline=True)
+        return rows
+
+    def _build_button_rows(self, keyboard: Keyboard, is_inline: bool):
+        """Внутренний метод для построения рядов кнопок"""
+        
+        rows = []
         current_row = []
         current_row_index = 0
-    
+        
         for button in keyboard.buttons:
             if button.row != current_row_index:
                 if current_row:
-                    row.append(current_row)
+                    rows.append(current_row)
                 current_row = []
                 current_row_index = button.row
-
-            if button.is_url:
-                inline_button = InlineKeyboardButton(
-                    text=button.text,
-                    url=button.action
-                )
-            elif button.is_callback:
-                inline_button = InlineKeyboardButton(
-                    text=button.text,
-                    callback_data=str(list(button.action.values())[0])
-                )
+            
+            if is_inline:
+                # Inline кнопка
+                if button.is_url:
+                    btn = InlineKeyboardButton(text=button.text, url=button.action)
+                elif button.is_callback:
+                    callback_value = list(button.action.values())[0] if isinstance(button.action, dict) else button.action
+                    btn = InlineKeyboardButton(text=button.text, callback_data=str(callback_value))
+                else:
+                    btn = InlineKeyboardButton(text=button.text, callback_data=str(button.action) if button.action else button.text)
             else:
-                inline_button = InlineKeyboardButton(
-                    text=button.text,
-                    callback_data=str(button.action) if button.action else button.text
-                )
-            current_row.append(inline_button)
+                # Reply кнопка
+                btn = KeyboardButton(text=button.text)
+            
+            current_row.append(btn)
+        
         if current_row:
-            row.append(current_row)
-        return row
+            rows.append(current_row)
+        return rows
 
 
     @property
