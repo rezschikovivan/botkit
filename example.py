@@ -3,7 +3,6 @@ import time
 t1 = time.time()
 
 from abot import Filter, Handler, BaseMsg, Sender, BaseComponent, Keyboard
-#from abot.aiogram_component import AiogramComponent
 from abot.vkbottle_component import VKBottleComponent
 from abot.aiogram_component import AiogramComponent
 
