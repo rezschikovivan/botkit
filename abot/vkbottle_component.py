@@ -57,12 +57,12 @@ class VKMsger(BaseMsg):
         await self.msg.reply(text)
 
     async def send_reply_kboard(self, keyboard:Keyboard, text:str|None = None):
-        vk_keyboard:Keyboard = vk_keyboard(True, False)
+        vk_keyboard:Keyboard = VKKeyboard(True, False)
         self.create_vk_kboard(vk_keyboard, keyboard)
         await self.msg.answer(text, keyboard=vk_keyboard)
 
     async def send_inline_kboard(self, keyboard:Keyboard, text:str|None = None):
-        vk_keyboard:Keyboard = vk_keyboard(False, True)
+        vk_keyboard:Keyboard = VKKeyboard(False, True)
         self.create_vk_kboard(vk_keyboard, keyboard)
         await self.msg.answer(text, keyboard=vk_keyboard)
 

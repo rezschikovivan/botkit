@@ -1,7 +1,6 @@
 from abot.core import BaseComponent, BaseFilterImplementor, BaseMsg
 from typing import Dict
 from aiogram.types import Message
-from aiogram.filters import BaseFilter 
 from aiogram import Bot, Dispatcher
 
 #компонент должен реализовать абстрактный класс, проверить с помощю: AiogramFilter()
@@ -36,7 +35,7 @@ class AiogramComponent(BaseComponent):
         pass
     @classmethod
     def add_bot(cls, token:str):
-        if not token in cls.bots.keys():
+        if token not in cls.bots.keys():
             cls.bots[token] = Bot(token=token)
             cls.dispatchers[token] = Dispatcher()
     @classmethod
