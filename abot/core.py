@@ -39,7 +39,7 @@ class ClsHandler:
 
         # ищем токен
         token = all_attrs.get("TOKEN")
-        if token == None: raise ValueError(f"Необходимо указать значение переменной класса: TOKEN в {name}")
+        if token is None: raise ValueError(f"Необходимо указать значение переменной класса: TOKEN в {name}")
         base_cmpnt.add_bot(token)
 
         # регистриуем хэндлеры с фильтрами 
