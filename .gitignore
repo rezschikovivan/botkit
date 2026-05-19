@@ -1,6 +1,7 @@
 tokens.py
 
 .vscode
+.ruff_cache
 
 venv3123/
 venv314/
