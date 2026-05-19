@@ -20,12 +20,12 @@ all_by_module = {
 attribute_modules = frozenset(["core" ])
 #item:module
 object_origins = {}
-for module, items in all_by_module.items():
+for Module, items in all_by_module.items():
     for item in items:
-        object_origins[item] = module
+        object_origins[item] = Module
 
 
-class module(ModuleType):
+class Module(ModuleType):
     """Automatically import objects from the modules."""
 
     def __getattr__(self, name):
@@ -64,7 +64,7 @@ from abot.core import start_bots, BaseComponent, ClsHandler, ClsComponenter, Cor
 old_module = sys.modules["abot"]
 
 # setup the new module and patch it into the dict of loaded modules
-new_module = sys.modules["abot"] = module("abot")
+new_module = sys.modules["abot"] = Module("abot")
 new_module.__dict__.update(
     {
         "__file__": __file__,

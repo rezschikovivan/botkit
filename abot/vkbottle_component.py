@@ -7,7 +7,8 @@ from vkbottle.dispatch.rules.base import AttachmentTypeRule, PayloadRule
 from vkbottle.dispatch.handlers import FromFuncHandler
 from vkbottle.dispatch.rules import ABCRule
 from vkbottle.bot import Message, Bot
-from vkbottle import Keyboard, OpenLink, Callback, Text
+from vkbottle import Keyboard as vk_keyboard
+from vkbottle import OpenLink, Callback, Text
 from vkbottle_types.objects import UsersUserFull
 
 class VKFilter(BaseFilterImplementor):
@@ -54,15 +55,18 @@ class VKMsger(BaseMsg):
         raise RuntimeError("VKBottleComponent пока не умеет удалять сообщения (я не нашел)")
     async def reply(self, text):
         await self.msg.reply(text)
+        
     async def send_reply_kboard(self, keyboard:Keyboard, text:str|None = None):
-        vk_keyboard:Keyboard = Keyboard(True, False)
+        vk_keyboard:Keyboard = vk_keyboard(True, False)
         self.create_vk_kboard(vk_keyboard, keyboard)
         await self.msg.answer(text, keyboard=vk_keyboard)
+
     async def send_inline_kboard(self, keyboard:Keyboard, text:str|None = None):
-        vk_keyboard:Keyboard = Keyboard(False, True)
+        vk_keyboard:Keyboard = vk_keyboard(False, True)
         self.create_vk_kboard(vk_keyboard, keyboard)
         await self.msg.answer(text, keyboard=vk_keyboard)
-    def create_vk_kboard(self, vk_keyboard:Keyboard, keyboard:Keyboard):
+
+    def create_vk_kboard(self, vk_keyboard:vk_keyboard, keyboard:Keyboard):
         row = 0
         for b in keyboard.buttons:
             if b.row == row:
@@ -71,7 +75,7 @@ class VKMsger(BaseMsg):
                 row = b.row
                 vk_keyboard.row()
                 self.add_button(vk_keyboard, b)
-    def add_button(self, vk_keyboard:Keyboard, button:Button):
+    def add_button(self, vk_keyboard:vk_keyboard, button:Button):
         if button.is_url:
             vk_keyboard.add(OpenLink(button.action, button.text))
         elif button.is_callback:

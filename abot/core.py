@@ -46,11 +46,11 @@ class ClsHandler():
         for i in all_attrs.values():
             if isinstance(i, Handler):
                 fltrs = []
-                for filter in i.filters:
+                for filter_inst in i.filters:
                     if base_cmpnt.get_filter() is None: break
-                    filter.filter_imp = base_cmpnt.get_filter()() if isinstance(base_cmpnt.get_filter()(), BaseFilterImplementor) else None
-                    if filter.filter_imp is None: break
-                    fltrs.extend(filter.ivoke_imp())
+                    filter_inst.filter_imp = base_cmpnt.get_filter()() if isinstance(base_cmpnt.get_filter()(), BaseFilterImplementor) else None
+                    if filter_inst.filter_imp is None: break
+                    fltrs.extend(filter_inst.ivoke_imp())
                 base_cmpnt.register_handler(token, i, *fltrs)
         return (mcs, name, bases, attrs)
 
