@@ -27,10 +27,9 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -e .
-        pip install flake8 pylint
+        pip install ruff pylint
 
-    - name: Run flake8
-      run: flake8 .
-
-    - name: Run pylint
-      run: pylint $(find . -name "*.py" ! -path "./venv/*")
+    - name: Run check
+      run: |
+        ruff check
+        pylint $(find . -name "*.py" ! -path "./venv/*")
