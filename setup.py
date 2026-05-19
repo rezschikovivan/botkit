@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from abot import __version__
 
 def readme():
-  with open('README.md', 'r') as f:
+  with open('README.md') as f:
     return f.read()
 
 setup(

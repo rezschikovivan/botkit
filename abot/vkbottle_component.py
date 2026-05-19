@@ -1,13 +1,13 @@
 from abot.core import BaseComponent, BaseFilterImplementor
 from abot.message import BaseMsg,Button,Sender
 from abot.message import Keyboard
-from typing import Dict, Any
+from typing import Dict
 import asyncio
-from vkbottle.dispatch.rules.base import AttachmentTypeRule, PayloadRule
+from vkbottle.dispatch.rules.base import AttachmentTypeRule
 from vkbottle.dispatch.handlers import FromFuncHandler
 from vkbottle.dispatch.rules import ABCRule
 from vkbottle.bot import Message, Bot
-from vkbottle import Keyboard as vk_keyboard
+from vkbottle import Keyboard as VKKeyboard
 from vkbottle import OpenLink, Callback, Text
 from vkbottle_types.objects import UsersUserFull
 
@@ -55,7 +55,7 @@ class VKMsger(BaseMsg):
         raise RuntimeError("VKBottleComponent пока не умеет удалять сообщения (я не нашел)")
     async def reply(self, text):
         await self.msg.reply(text)
-        
+
     async def send_reply_kboard(self, keyboard:Keyboard, text:str|None = None):
         vk_keyboard:Keyboard = vk_keyboard(True, False)
         self.create_vk_kboard(vk_keyboard, keyboard)
@@ -66,7 +66,7 @@ class VKMsger(BaseMsg):
         self.create_vk_kboard(vk_keyboard, keyboard)
         await self.msg.answer(text, keyboard=vk_keyboard)
 
-    def create_vk_kboard(self, vk_keyboard:vk_keyboard, keyboard:Keyboard):
+    def create_vk_kboard(self, vk_keyboard:VKKeyboard, keyboard:Keyboard):
         row = 0
         for b in keyboard.buttons:
             if b.row == row:
@@ -75,7 +75,7 @@ class VKMsger(BaseMsg):
                 row = b.row
                 vk_keyboard.row()
                 self.add_button(vk_keyboard, b)
-    def add_button(self, vk_keyboard:vk_keyboard, button:Button):
+    def add_button(self, vk_keyboard:VKKeyboard, button:Button):
         if button.is_url:
             vk_keyboard.add(OpenLink(button.action, button.text))
         elif button.is_callback:
@@ -126,7 +126,7 @@ class VKBottleComponent(BaseComponent):
         return VKMsger
     @classmethod
     def add_bot(cls, token:str):
-        if not token in cls.bots.keys():
+        if token not in cls.bots.keys():
             cls.bots[token] = Bot(token=token)
     @classmethod
     def register_handler(cls, token, method, *filters):
