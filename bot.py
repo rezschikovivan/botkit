@@ -1,4 +1,6 @@
 import time
+
+from abot.aiogram_component import AiogramComponent
 t1 = time.time()
 from abot import Filter, Handler, start_bots, ClsHandler, set_handlers_registrator, BaseMsg, Keyboard
 from abot.vkbottle_component import VKBottleComponent
@@ -26,6 +28,7 @@ set_handlers_registrator(ScheldueClsHandler())
 import tokens
 
 class CabsScheldue(Observer):
+    scheldue = ScheldueGetter.get_instance()
     all_cabs = ['308', '309', '310', '311', '312', '313', '314', '815', '316', '317', '318', '319', '320', '321', 
                 '023', '021', '019', '016', '017', '013', '007', '112', '105', '110', '103', '108', '101', '106', '104',
                 '229', '226', '227', '225', '222', '220', '218', '219', '217', '215', '213', '316', '214', '212', '211', '209', '210', '208', '207', '206', '205', '204', '203', '202', '201', '200', 
@@ -60,11 +63,15 @@ class CabsScheldue(Observer):
     @Handler(Filter().in_text("кабинет"))
     async def send_free_cabs1(cls, message:BaseMsg):
         await message.send_inline_kboard(Keyboard([ ["1", "1"], ["2", "2"], ["3", "3"], ["4", "4"], ["5", "5"] ], [ ['6', "6"],['7', "7"], ['8', "8"], ['9', "9"] ]), "Выберите пару:")
-    TOKEN = tokens.vk_token
-    scheldue = ScheldueGetter.get_instance()
 
 class VKCabsScheldue(CabsScheldue, VKBottleComponent):    
-    ...
+    TOKEN = tokens.vk_token
+    def updates(cls, changes):
+        pass
+class AiogramCabsScheldue(CabsScheldue, AiogramComponent):
+    TOKEN = "8397880073:AAGg_LPBIr3Dlg3z1eMc0187wUU_kKZcY7I"
+    def updates(cls, changes):
+        pass
     
 import asyncio
 print("works")
