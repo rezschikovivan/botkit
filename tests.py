@@ -2,7 +2,7 @@ import time
 
 t1 = time.time()
 
-from abot import Filter, Handler, BaseMsg, Sender, BaseComponent, Keyboard
+from abot import Filter, Handler, BaseMsg, Sender, BaseComponent, Keyboard, start_bots
 #from abot.aiogram_component import AiogramComponent
 from abot.vkbottle_component import VKBottleComponent
 from abot.aiogram_component import AiogramComponent
@@ -28,7 +28,7 @@ tgram_token = tokens.tgram_token
 
 # set_handlers_registrator(F)
 
-class Echo(BaseComponent):
+class Echo():
 
     @Handler(Filter().in_text("name2"))
     async def cab8(cls, message:BaseMsg):
@@ -65,5 +65,4 @@ class TGEcho(Echo, AiogramComponent):
 
 import asyncio
 print("works")
-#asyncio.run(start_bots())
-asyncio.run(VKBottleComponent.cretae_polling_tasks()[0])
+asyncio.run(start_bots())

@@ -69,7 +69,7 @@ class VKCabsScheldue(CabsScheldue, VKBottleComponent):
     def updates(cls, changes):
         pass
 class AiogramCabsScheldue(CabsScheldue, AiogramComponent):
-    TOKEN = "8397880073:AAGg_LPBIr3Dlg3z1eMc0187wUU_kKZcY7I"
+    TOKEN = tokens.tgram_token
     def updates(cls, changes):
         pass
     
