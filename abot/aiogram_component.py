@@ -57,27 +57,36 @@ class AiogramMsg(BaseMsg):
     async def delete(self):
         return await self.msg.delete()
     
-async def send_reply_kboard(self, keyboard: Keyboard, text: str | None = None):
-    await self.msg.answer(
-        text, 
-        reply_markup=self._create_reply_keyboard(keyboard)
-    )
-
-    async def send_inline_kboard(self, keyboard: Keyboard, text: str | None = None):
+    async def send_reply_kboard(self, keyboard: Keyboard, text: str | None = None):
+        reply_markup = self._create_reply_keyboard(keyboard)
         await self.msg.answer(
             text, 
-            reply_markup=self._create_inline_keyboard(keyboard)
+            reply_markup=reply_markup
         )
 
-    def _create_reply_keyboard(self, keyboard: Keyboard) -> list[list[KeyboardButton]]:
-        """Создаёт reply клавиатуру и возвращает список строк с кнопками"""
-        rows = self._build_button_rows(keyboard, is_inline=False)
-        return rows
+    async def send_inline_kboard(self, keyboard: Keyboard, text: str | None = None):
+        inline_markup = self._create_inline_keyboard(keyboard)
+        await self.msg.answer(
+            text, 
+            reply_markup=inline_markup
+    )
 
-    def _create_inline_keyboard(self, keyboard: Keyboard) -> list[list[InlineKeyboardButton]]:
-        """Создаёт inline клавиатуру и возвращает список строк с кнопками"""
+
+    def _create_reply_keyboard(self, keyboard: Keyboard) -> ReplyKeyboardMarkup:
+        """Создаёт ReplyKeyboardMarkup из объекта Keyboard"""
+        rows = self._build_button_rows(keyboard, is_inline=False)
+    
+        return ReplyKeyboardMarkup(
+            keyboard=rows,
+            resize_keyboard=True,
+            one_time_keyboard=False
+        )
+
+    def _create_inline_keyboard(self, keyboard: Keyboard) -> InlineKeyboardMarkup:
+        """Создаёт InlineKeyboardMarkup из объекта Keyboard"""
         rows = self._build_button_rows(keyboard, is_inline=True)
-        return rows
+    
+        return InlineKeyboardMarkup(inline_keyboard=rows)
 
     def _build_button_rows(self, keyboard: Keyboard, is_inline: bool):
         """Внутренний метод для построения рядов кнопок"""
