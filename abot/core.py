@@ -52,7 +52,7 @@ class ClsHandler():
                     if filter.filter_imp is None: break
                     fltrs.extend(filter.ivoke_imp())
                 base_cmpnt.register_handler(token, i, *fltrs)
-        return (mcs, name, bases, attrs)
+        return (mcs, name, bases, all_attrs)
 
     def after(self, new_cls, mcs, name, bases, attrs:Dict[str,Any]):
         """Вызывается после регистрации и проверки на реализации абстрактных методов класса-хэндлера""" 

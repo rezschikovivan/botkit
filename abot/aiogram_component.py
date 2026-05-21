@@ -1,3 +1,4 @@
+import asyncio
 from abot.core import BaseComponent, BaseFilterImplementor, BaseMsg
 from abot.message import BaseMsg, Sender, Keyboard
 from typing import Dict
@@ -7,40 +8,64 @@ from aiogram import Bot, Dispatcher
 
 #компонент должен реализовать абстрактный класс, проверить с помощю: AiogramFilter()
 class AiogramFilter(BaseFilterImplementor):
+    
     def func(self, f: callable):
         class CustomFilter(BaseFilter):
             def __init__(self, *func: callable):
                 self.func = func
 
-            def __call__(self, event)->bool:
+            # ИСПРАВЛЕНО: async def вместо def
+            async def __call__(self, event) -> bool:
                 for f in self.func:
-                    if f(event): continue
-                    return False
-                else: return True
+                    # ИСПРАВЛЕНО: проверка на корутину
+                    if asyncio.iscoroutinefunction(f):
+                        result = await f(event)
+                    else:
+                        result = f(event)
+                    
+                    if not result:
+                        return False
+                return True
         return CustomFilter(f)
     
     def photo(self):
-        return self.func(lambda x: bool(x.photo))
-    
+        async def check_photo(message: Message) -> bool:
+            return bool(message.photo)
+        # ИСПРАВЛЕНО: возвращаем экземпляр фильтра
+        return self.func(check_photo)
+
     def video(self):
-        return self.func(lambda x: bool(x.video))
-    
+        async def check_video(message: Message) -> bool:
+            return bool(message.video)
+        return self.func(check_video)
+
     def audio(self):
-        return self.func(lambda x: bool(x.audio))
-    
+        async def check_audio(message: Message) -> bool:
+            return bool(message.audio)
+        return self.func(check_audio)
+
     def document(self):
-        return self.func(lambda x: bool(x.document))
-    
+        async def check_document(message: Message) -> bool:
+            return bool(message.document)
+        return self.func(check_document)
+
     def location(self):
-        return self.func(lambda x: bool(x.location))
-    
+        async def check_location(message: Message) -> bool:
+            return bool(message.location)
+        return self.func(check_location)
+
     def voice(self):
-        return self.func(lambda x: bool(x.voice))
-    
+        async def check_voice(message: Message) -> bool:
+            return bool(message.voice)
+        return self.func(check_voice)
+
     def sticker(self):
-        return self.func(lambda x: bool(x.sticker))
+        async def check_sticker(message: Message) -> bool:
+            return bool(message.sticker)
+        return self.func(check_sticker)
 #компонент должен реализовать абстрактный класс, проверить с помощю: AiogramMsg()
 class AiogramMsg(BaseMsg):
+    
     msg:Message
 
     def __init__(self, msg: Message):
@@ -173,7 +198,7 @@ class AiogramComponent(BaseComponent):
         return AiogramMsg
     @classmethod
     def add_bot(cls, token:str):
-        if not token in cls.bots.keys():
+        if  token not in cls.bots.keys():
             cls.bots[token] = Bot(token=token)
             cls.dispatchers[token] = Dispatcher()
     @classmethod
