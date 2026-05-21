@@ -27,7 +27,7 @@ from abot import Filter, Handler, BaseMsg, Sender, Keyboard, start_bots
 from abot.vkbottle_component import VKBottleComponent
 from abot.aiogram_component import AiogramComponent
 
-# Если нужно, можно создать свой класс-хэндлер, который будет выполнять какие-то действия при регистрации методов, например, проверять наличие определенных атрибутов или автоматически регистрировать методы в каком-то реестре. Для этого нужно создать класс, наследующийся от ClsHandler, и реализовать методы before и after. Метод before будет вызываться перед созданием класса-хэндлера, а метод after - после создания класса-хэндлера. В этих методах можно выполнять любые необходимые действия с классом-хэндлером или его атрибутами. Но важно возвращать результат вызова родителя, чтобы не нарушать логику работы ядра. 
+# If necessary, you can create your own handler class that will perform certain actions when methods are registered, such as checking for the presence of specific attributes or automatically registering methods in a registry. To do this, you need to create a class that inherits from ClsHandler and implement the before and after methods. The before method will be called before the handler class is created, and the after method will be called after the handler class is created. These methods allow you to perform any necessary actions with the handler class or its attributes. However, it is important to return the result of the parent call to avoid breaking the core's logic. 
 class F(ClsHandler):
 
     def before(cls, mcs, name, bases, attrs):
@@ -57,7 +57,7 @@ class VKEcho(Echo, VKBottleComponent):
     async def cab3(cls, message:BaseMsg):
         await message.answer("Кфбинет №11")
 
-    # Пример метода-хэндлера, который выводит в консоль информацию о сообщении и его отправителе. В этом методе мы получаем объект отправителя сообщения, а также проверяем наличие различных типов вложений (фото, документы, аудио и т.д.) и выводим эту информацию в консоль.
+    # An example of a handler method that displays information about the message and its sender in the console. In this method, we retrieve the sender object of the message and check for different types of attachments (photos, documents, audio, etc.), displaying this information in the console.
     # @Handler()
     # async def cab2(cls, message:BaseMsg):
 
@@ -84,5 +84,5 @@ print("works")
 asyncio.run(start_bots())
 ```
 
-## summary
+## Summary
 Basic functionality is now available using aiogram and vkbottle. It currently lacks features such as inline_buttons and FSM, but it is ideal for writing bots that do not require complex user interaction. 
