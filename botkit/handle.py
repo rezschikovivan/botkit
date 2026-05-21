@@ -1,5 +1,5 @@
-from  abot.message import MsgFactory
-from abot.filter import Filter
+from  botkit.message import MsgFactory
+from botkit.filter import Filter
 
 class Handler():
     '''Декоратор, помечающий ядру, что этот медод является хэндлером. В конструкторе указываются экземпляры Filter'''
