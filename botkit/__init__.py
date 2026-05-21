@@ -1,4 +1,4 @@
-"""
+"""botkit
 Ленивая инициализация компоненотов
 """
 import sys
@@ -8,12 +8,12 @@ __version__ = "1.0.0"
 
 # import mapping to objects in other modules
 all_by_module = {
-    "abot.core":["start_bots", "BaseComponent", "ClsHandler", "ClsComponenter", "CoreMeta", "set_cmpnts_registrator", "set_handlers_registrator"],
-    "abot.handle": ["Handler"],
-    "abot.message": ["BaseMsg", "Sender", "Keyboard", "Button", "MsgFactory"],
-    "abot.filter":["Filter", "ABCFilter"],
-    "abot.aiogram_component": ["AiogramComponent", "AiogramFilter", "AiogramMsger"],
-    "abot.vkbottle_component": ["VKBottleComponent", "VKFilter", "VKMsger"]
+    "botkit.core":["start_bots", "BaseComponent", "ClsHandler", "ClsComponenter", "CoreMeta", "set_cmpnts_registrator", "set_handlers_registrator"],
+    "botkit.handle": ["Handler"],
+    "botkit.message": ["BaseMsg", "Sender", "Keyboard", "Button", "MsgFactory"],
+    "botkit.filter":["Filter", "ABCFilter"],
+    "botkit.aiogram_component": ["AiogramComponent", "AiogramFilter", "AiogramMsger"],
+    "botkit.vkbottle_component": ["VKBottleComponent", "VKFilter", "VKMsger"]
 }
 
 # modules that should be imported when accessed as attributes of werkzeug
@@ -35,7 +35,7 @@ class Module(ModuleType):
                 setattr(self, extra_name, getattr(module, extra_name))
             return getattr(module, name)
         elif name in attribute_modules:
-            __import__("abot." + name)
+            __import__("botkit." + name)
         return 
 
     def __dir__(self):
@@ -55,20 +55,20 @@ class Module(ModuleType):
         )
         return result
 
-from abot.message import BaseMsg, Sender, Keyboard, Button
-from abot.handle import Handler
-from abot.filter import Filter, BaseFilterImplementor
-from abot.core import start_bots, BaseComponent, ClsHandler, ClsComponenter, CoreMeta, set_cmpnts_registrator, set_handlers_registrator
+from botkit.message import BaseMsg, Sender, Keyboard, Button
+from botkit.handle import Handler
+from botkit.filter import Filter, BaseFilterImplementor
+from botkit.core import start_bots, BaseComponent, ClsHandler, ClsComponenter, CoreMeta, set_cmpnts_registrator, set_handlers_registrator
 
 # keep a reference to this module so that it's not garbage collected
-old_module = sys.modules["abot"]
+old_module = sys.modules["botkit"]
 
 # setup the new module and patch it into the dict of loaded modules
-new_module = sys.modules["abot"] = Module("abot")
+new_module = sys.modules["botkit"] = Module("botkit")
 new_module.__dict__.update(
     {
         "__file__": __file__,
-        "__package__": "abot",
+        "__package__": "botkit",
         "__path__": __path__,
         "__doc__": __doc__,
         "__version__": __version__,
