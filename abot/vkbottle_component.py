@@ -58,15 +58,15 @@ class VKMsger(BaseMsg):
 
     async def send_reply_kboard(self, keyboard:Keyboard, text:str|None = None):
         vk_keyboard:Keyboard = VKKeyboard(True, False)
-        self.create_vk_kboard(vk_keyboard, keyboard)
+        self.fill_vk_kboard(vk_keyboard, keyboard)
         await self.msg.answer(text, keyboard=vk_keyboard)
 
     async def send_inline_kboard(self, keyboard:Keyboard, text:str|None = None):
         vk_keyboard:Keyboard = VKKeyboard(False, True)
-        self.create_vk_kboard(vk_keyboard, keyboard)
+        self.fill_vk_kboard(vk_keyboard, keyboard)
         await self.msg.answer(text, keyboard=vk_keyboard)
 
-    def create_vk_kboard(self, vk_keyboard:VKKeyboard, keyboard:Keyboard):
+    def fill_vk_kboard(self, vk_keyboard:VKKeyboard, keyboard:Keyboard):
         row = 0
         for b in keyboard.buttons:
             if b.row == row:
@@ -81,7 +81,7 @@ class VKMsger(BaseMsg):
         elif button.is_callback:
             vk_keyboard.add(Callback(button.text, {"payload":list(button.action.values())[0]}))
         else: 
-            vk_keyboard.add(Text(button.text, payload={"payload":str(button.action)}))
+            vk_keyboard.add(Text(button.text))
     @property
     def date(self):
         return self.msg.date

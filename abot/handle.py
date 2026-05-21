@@ -8,14 +8,16 @@ class Handler():
         self.func_cls = None
         self.is_wrapped = False
 
-    def __call__(self, func_or_msg = None, *args, **kwds):
+    def __call__(self, func_or_msg = None):
         if not self.is_wrapped:
             self.func = func_or_msg
             self.is_wrapped = True
             return self
         if func_or_msg is not None: func_or_msg = MsgFactory.make_msg(func_or_msg)
-        return self.func(self.func_cls, func_or_msg, *args, **kwds)
+        return self.func(self.func_cls, func_or_msg)
     
+    def __await__(self, msg):
+        yield from self.func(self.func_cls, MsgFactory.make_msg(msg)).__await__()
     @property
     def __code__(self):
         return self.func.__code__

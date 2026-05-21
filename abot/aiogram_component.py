@@ -2,6 +2,8 @@ import asyncio
 from abot.core import BaseComponent, BaseFilterImplementor, BaseMsg
 from abot.message import BaseMsg, Sender, Keyboard
 from typing import Dict
+from aiogram.types import Message, KeyboardButton, InlineKeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup
+from aiogram.filters import BaseFilter
 from aiogram.types import Message
 from aiogram import Bot, Dispatcher
 

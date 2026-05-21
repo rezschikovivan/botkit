@@ -12,7 +12,7 @@ class MsgMetods(ABC):
     @abstractmethod
     async def send_reply_kboard(self,keyboard:"Keyboard", text:str|None = None):""" """
     @abstractmethod
-    async def send_inline_kboard(self,keyboard:"Keyboard", text:str|None = None):""" """
+    async def send_inline_kboard(self,keyboard:"Keyboard", text:str|None = None):""" !!!ВНИММАНИЕ!!! функионал инлайн кнопок находитьсся в разработке и сейчас нет обработчиков callback, поэтому пока используйте send_reply_kboard и обрабатывайте нажатия на кнопки через фильтры хэндлеров"""
 
 class BaseMsg(MsgMetods):
     """Методы наследников этого класса должны переопределять методы для выполнения действия в соответствующей библиотеке"""
