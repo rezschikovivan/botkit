@@ -1,10 +1,10 @@
 """
-код ленивой инициализации модулей повзаимствован с https://github.com/pallets/werkzeug/tree/71eab19be2c83fb476de51275e2f9bdf69d5cc10
+Ленивая инициализация компоненотов
 """
 import sys
 from types import ModuleType
 
-__version__ = "0.0.0"
+__version__ = "1.0.0"
 
 # import mapping to objects in other modules
 all_by_module = {
@@ -20,12 +20,12 @@ all_by_module = {
 attribute_modules = frozenset(["core" ])
 #item:module
 object_origins = {}
-for module, items in all_by_module.items():
+for Module, items in all_by_module.items():
     for item in items:
-        object_origins[item] = module
+        object_origins[item] = Module
 
 
-class module(ModuleType):
+class Module(ModuleType):
     """Automatically import objects from the modules."""
 
     def __getattr__(self, name):
@@ -64,7 +64,7 @@ from abot.core import start_bots, BaseComponent, ClsHandler, ClsComponenter, Cor
 old_module = sys.modules["abot"]
 
 # setup the new module and patch it into the dict of loaded modules
-new_module = sys.modules["abot"] = module("abot")
+new_module = sys.modules["abot"] = Module("abot")
 new_module.__dict__.update(
     {
         "__file__": __file__,

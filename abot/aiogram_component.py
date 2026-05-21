@@ -2,8 +2,7 @@ import asyncio
 from abot.core import BaseComponent, BaseFilterImplementor, BaseMsg
 from abot.message import BaseMsg, Sender, Keyboard
 from typing import Dict
-from aiogram.types import Message, KeyboardButton, InlineKeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup
-from aiogram.filters import BaseFilter
+from aiogram.types import Message
 from aiogram import Bot, Dispatcher
 
 #компонент должен реализовать абстрактный класс, проверить с помощю: AiogramFilter()
@@ -196,7 +195,7 @@ class AiogramComponent(BaseComponent):
         return AiogramMsg
     @classmethod
     def add_bot(cls, token:str):
-        if not token in cls.bots.keys():
+        if token not in cls.bots.keys():
             cls.bots[token] = Bot(token=token)
             cls.dispatchers[token] = Dispatcher()
     @classmethod

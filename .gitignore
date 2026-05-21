@@ -1,5 +1,12 @@
 tokens.py
 
+.vscode
+.ruff_cache
+
+venv3123/
+venv314/
+venv/
+
 .env
 # Byte-compiled / optimized / DLL files
 __pycache__/
