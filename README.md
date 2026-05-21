@@ -2,6 +2,11 @@
 
 This framework is designed for writing bots that can use various frameworks to interact with the messenger API.
 ## Install
+
+```
+pip install abot
+```
+
 Download from: https://github.com/rezschikovivan/abot 
 
 ## Why use
