@@ -1,4 +1,4 @@
-"""botkit
+"""botomorph
 Ленивая инициализация компоненотов
 """
 import sys
@@ -8,12 +8,12 @@ __version__ = "1.0.0"
 
 # import mapping to objects in other modules
 all_by_module = {
-    "botkit.core":["start_bots", "BaseComponent", "ClsHandler", "ClsComponenter", "CoreMeta", "set_cmpnts_registrator", "set_handlers_registrator"],
-    "botkit.handle": ["Handler"],
-    "botkit.message": ["BaseMsg", "Sender", "Keyboard", "Button", "MsgFactory"],
-    "botkit.filter":["Filter", "ABCFilter"],
-    "botkit.aiogram_component": ["AiogramComponent", "AiogramFilter", "AiogramMsger"],
-    "botkit.vkbottle_component": ["VKBottleComponent", "VKFilter", "VKMsger"]
+    "botomorph.core":["start_bots", "BaseComponent", "ClsHandler", "ClsComponenter", "CoreMeta", "set_cmpnts_registrator", "set_handlers_registrator"],
+    "botomorph.handle": ["Handler"],
+    "botomorph.message": ["BaseMsg", "Sender", "Keyboard", "Button", "MsgFactory"],
+    "botomorph.filter":["Filter", "ABCFilter"],
+    "botomorph.aiogram_component": ["AiogramComponent", "AiogramFilter", "AiogramMsger"],
+    "botomorph.vkbottle_component": ["VKBottleComponent", "VKFilter", "VKMsger"]
 }
 
 # modules that should be imported when accessed as attributes of werkzeug
@@ -35,7 +35,7 @@ class Module(ModuleType):
                 setattr(self, extra_name, getattr(module, extra_name))
             return getattr(module, name)
         elif name in attribute_modules:
-            __import__("botkit." + name)
+            __import__("botomorph." + name)
         return 
 
     def __dir__(self):
@@ -55,20 +55,20 @@ class Module(ModuleType):
         )
         return result
 
-from botkit.message import BaseMsg, Sender, Keyboard, Button
-from botkit.handle import Handler
-from botkit.filter import Filter, BaseFilterImplementor
-from botkit.core import start_bots, BaseComponent, ClsHandler, ClsComponenter, CoreMeta, set_cmpnts_registrator, set_handlers_registrator
+from botomorph.message import BaseMsg, Sender, Keyboard, Button
+from botomorph.handle import Handler
+from botomorph.filter import Filter, BaseFilterImplementor
+from botomorph.core import start_bots, BaseComponent, ClsHandler, ClsComponenter, CoreMeta, set_cmpnts_registrator, set_handlers_registrator
 
 # keep a reference to this module so that it's not garbage collected
-old_module = sys.modules["botkit"]
+old_module = sys.modules["botomorph"]
 
 # setup the new module and patch it into the dict of loaded modules
-new_module = sys.modules["botkit"] = Module("botkit")
+new_module = sys.modules["botomorph"] = Module("botomorph")
 new_module.__dict__.update(
     {
         "__file__": __file__,
-        "__package__": "botkit",
+        "__package__": "botomorph",
         "__path__": __path__,
         "__doc__": __doc__,
         "__version__": __version__,

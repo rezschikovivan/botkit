@@ -1,6 +1,6 @@
-from botkit.core import BaseComponent, BaseFilterImplementor
-from botkit.message import BaseMsg,Button,Sender
-from botkit.message import Keyboard
+from botomorph.core import BaseComponent, BaseFilterImplementor
+from botomorph.message import BaseMsg,Button,Sender
+from botomorph.message import Keyboard
 from typing import Dict
 import asyncio
 from vkbottle.dispatch.rules.base import AttachmentTypeRule

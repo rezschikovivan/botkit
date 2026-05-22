@@ -1,13 +1,13 @@
-# botkit
+# botomorph
 
 This framework is designed for writing bots that can use various frameworks to interact with the messenger API.
 ## Install
 
 ```
-pip install botkit
+pip install botomorph
 ```
 
-Download from: https://github.com/rezschikovivan/botkit 
+Download from: https://github.com/rezschikovivan/botomorph 
 
 ## Why use
 
@@ -23,9 +23,9 @@ The framework allows you to run bots written in it on different platforms, using
 ## Example
 
 ```
-from botkit import Filter, Handler, BaseMsg, Sender, Keyboard, start_bots
-from botkit.vkbottle_component import VKBottleComponent
-from botkit.aiogram_component import AiogramComponent
+from botomorph import Filter, Handler, BaseMsg, Sender, Keyboard, start_bots
+from botomorph.vkbottle_component import VKBottleComponent
+from botomorph.aiogram_component import AiogramComponent
 
 # If necessary, you can create your own handler class that will perform certain actions when methods are registered, such as checking for the presence of specific attributes or automatically registering methods in a registry. To do this, you need to create a class that inherits from ClsHandler and implement the before and after methods. The before method will be called before the handler class is created, and the after method will be called after the handler class is created. These methods allow you to perform any necessary actions with the handler class or its attributes. However, it is important to return the result of the parent call to avoid breaking the core's logic. 
 class F(ClsHandler):

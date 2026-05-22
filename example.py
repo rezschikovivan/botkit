@@ -1,12 +1,12 @@
 import time
 
-from botkit.core import ClsHandler, set_handlers_registrator
+from botomorph.core import ClsHandler, set_handlers_registrator
 
 t1 = time.time()
 
-from botkit import Filter, Handler, BaseMsg, Sender, Keyboard, start_bots
-from botkit.vkbottle_component import VKBottleComponent
-from botkit.aiogram_component import AiogramComponent
+from botomorph import Filter, Handler, BaseMsg, Sender, Keyboard, start_bots
+from botomorph.vkbottle_component import VKBottleComponent
+from botomorph.aiogram_component import AiogramComponent
 
 t2 = time.time()
 print(t2-t1)

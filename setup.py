@@ -1,18 +1,18 @@
 from setuptools import setup, find_packages
-from botkit import __version__
+from botomorph import __version__
 
   
 readme_literal = """
-# botkit
+# botomorph
 
 This framework is designed for writing bots that can use various frameworks to interact with the messenger API.
 ## Install
 
 ```
-pip install botkit
+pip install botomorph
 ```
 
-Download from: https://github.com/rezschikovivan/botkit 
+Download from: https://github.com/rezschikovivan/botomorph 
 
 ## Why use
 
@@ -28,9 +28,9 @@ The framework allows you to run bots written in it on different platforms, using
 ## Example
 
 ```
-from botkit import Filter, Handler, BaseMsg, Sender, Keyboard, start_bots
-from botkit.vkbottle_component import VKBottleComponent
-from botkit.aiogram_component import AiogramComponent
+from botomorph import Filter, Handler, BaseMsg, Sender, Keyboard, start_bots
+from botomorph.vkbottle_component import VKBottleComponent
+from botomorph.aiogram_component import AiogramComponent
 
 # Если нужно, можно создать свой класс-хэндлер, который будет выполнять какие-то действия при регистрации методов, например, проверять наличие определенных атрибутов или автоматически регистрировать методы в каком-то реестре. Для этого нужно создать класс, наследующийся от ClsHandler, и реализовать методы before и after. Метод before будет вызываться перед созданием класса-хэндлера, а метод after - после создания класса-хэндлера. В этих методах можно выполнять любые необходимые действия с классом-хэндлером или его атрибутами. Но важно возвращать результат вызова родителя, чтобы не нарушать логику работы ядра. 
 class F(ClsHandler):
@@ -97,14 +97,14 @@ Basic functionality is now available using aiogram and vkbottle. It currently la
 
 
 setup(
-  name='botkit',
+  name='botomorph',
   version = __version__,
   author='rezschikovivan',
   author_email='rezschikovivan@gmail.com',
-  description='Framework for creating bots',
+  description='Framework to creating bots',
   long_description=readme_literal,
   long_description_content_type='text/markdown',
-  url='https://github.com/rezschikovivan/botkit',
+  url='https://github.com/rezschikovivan/botomorph',
   packages=find_packages(),
   install_requires=[
     'vkbottle==4.8.0', 
@@ -115,7 +115,7 @@ setup(
     'License :: OSI Approved :: MIT License',
     'Operating System :: OS Independent'
   ],
-  keywords='botkit bot bots asynchronous framework aiogram vkbottle',
+  keywords='botomorph bot bots asynchronous framework aiogram vkbottle',
   project_urls= {},
   python_requires='>=3.12.0'
 )
