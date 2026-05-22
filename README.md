@@ -85,4 +85,4 @@ asyncio.run(start_bots())
 ```
 
 ## Summary
-Basic functionality is now available using aiogram and vkbottle. It currently lacks features such as inline_buttons and FSM, but it is ideal for writing bots that do not require complex user interaction. 
+Basic functionality is now available using aiogram and vkbottle. It currently lacks features such as inline_buttons and FSM, but it is ideal for writing bots that do not require complex user interaction but still support multi-platform
